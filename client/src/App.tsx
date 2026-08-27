@@ -1,42 +1,32 @@
 import { Toaster } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import DashboardLayout from "@/components/DashboardLayout";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import { DashboardPage, DocumentsPage, IncidentsPage, InspectionsPage, OperationsPage, StandsPage, TicketsPage } from "@/pages/ForestPages";
+import { ContractsFinePage } from "@/pages/ContractsFinePage";
 import NotFound from "@/pages/NotFound";
-import { Route, Switch } from "wouter";
-import ErrorBoundary from "./components/ErrorBoundary";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import Home from "./pages/Home";
+import { Route, Switch } from "wouter";
+
+function Shell({ children }: { children: React.ReactNode }) { return <DashboardLayout>{children}</DashboardLayout>; }
 
 function Router() {
-  // make sure to consider if you need authentication for certain routes
-  return (
-    <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
-      <Route component={NotFound} />
-    </Switch>
-  );
+  return <Switch>
+    <Route path="/">{() => <Shell><DashboardPage /></Shell>}</Route>
+    <Route path="/talhoes">{() => <Shell><StandsPage /></Shell>}</Route>
+    <Route path="/tickets">{() => <Shell><TicketsPage /></Shell>}</Route>
+    <Route path="/operacoes">{() => <Shell><OperationsPage /></Shell>}</Route>
+    <Route path="/contratos">{() => <Shell><ContractsFinePage /></Shell>}</Route>
+    <Route path="/arquivos">{() => <Shell><DocumentsPage /></Shell>}</Route>
+    <Route path="/vistorias">{() => <Shell><InspectionsPage /></Shell>}</Route>
+    <Route path="/ocorrencias">{() => <Shell><IncidentsPage /></Shell>}</Route>
+    <Route path="/404" component={NotFound} />
+    <Route component={NotFound} />
+  </Switch>;
 }
 
-// NOTE: About Theme
-// - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
-//   to keep consistent foreground/background color across components
-// - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
-
 function App() {
-  return (
-    <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="light"
-        // switchable
-      >
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
-      </ThemeProvider>
-    </ErrorBoundary>
-  );
+  return <ErrorBoundary><ThemeProvider defaultTheme="light"><TooltipProvider><Toaster richColors position="top-right" /><Router /></TooltipProvider></ThemeProvider></ErrorBoundary>;
 }
 
 export default App;
