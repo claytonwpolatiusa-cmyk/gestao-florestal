@@ -6,6 +6,7 @@ import {
   incidents,
   inspections,
   ledgerEntries,
+  propertyAuditLogs,
   properties,
   stands,
   tickets,
@@ -78,10 +79,30 @@ export async function getOwnedProperty(id: number, ownerId: number) {
   return result[0];
 }
 
-export async function createProperty(ownerId: number, values: Omit<typeof properties.$inferInsert, "ownerId">) {
+type AuditActor = { id: number; name: string | null };
+
+export async function createProperty(ownerId: number, actor: AuditActor, values: Omit<typeof properties.$inferInsert, "ownerId" | "createdByUserId" | "updatedByUserId">) {
   const db = await requireDb();
-  const [created] = await db.insert(properties).values({ ...values, ownerId }).$returningId();
+  const [created] = await db.insert(properties).values({ ...values, ownerId, createdByUserId: actor.id, updatedByUserId: actor.id }).$returningId();
+  await db.insert(propertyAuditLogs).values({ propertyId: created.id, actorUserId: actor.id, actorName: actor.name, action: "criada", changeSummary: "Cadastro inicial da propriedade." });
   return created.id;
+}
+
+export async function updateProperty(id: number, ownerId: number, actor: AuditActor, values: Omit<typeof properties.$inferInsert, "id" | "ownerId" | "createdByUserId" | "updatedByUserId" | "createdAt" | "updatedAt">) {
+  const previous = await getOwnedProperty(id, ownerId);
+  if (!previous) throw new Error("Propriedade não encontrada ou sem autorização.");
+  const changedLabels: Record<string, string> = { name: "nome", registry: "matrícula", carNumber: "CAR", municipality: "município", state: "UF", address: "endereço/acesso", notes: "observações" };
+  const changed = Object.entries(values).filter(([key, value]) => previous[key as keyof typeof previous] !== value).map(([key]) => changedLabels[key] || key);
+  const db = await requireDb();
+  await db.update(properties).set({ ...values, updatedByUserId: actor.id }).where(eq(properties.id, id));
+  if (changed.length) await db.insert(propertyAuditLogs).values({ propertyId: id, actorUserId: actor.id, actorName: actor.name, action: "atualizada", changeSummary: `Campos alterados: ${changed.join(", ")}.` });
+}
+
+export async function listPropertyAuditLogs(propertyId: number, ownerId: number) {
+  const property = await getOwnedProperty(propertyId, ownerId);
+  if (!property) throw new Error("Propriedade não encontrada ou sem autorização.");
+  const db = await requireDb();
+  return db.select().from(propertyAuditLogs).where(eq(propertyAuditLogs.propertyId, propertyId)).orderBy(desc(propertyAuditLogs.createdAt));
 }
 
 export async function listStands(ownerId: number) {

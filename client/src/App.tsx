@@ -1,9 +1,10 @@
 import { Toaster } from "@/components/ui/sonner";
 import DashboardLayout from "@/components/DashboardLayout";
 import ErrorBoundary from "@/components/ErrorBoundary";
-import { DashboardPage, DocumentsPage, IncidentsPage, InspectionsPage, OperationsPage, StandsPage } from "@/pages/ForestPages";
+import { DashboardPage, DocumentsPage, IncidentsPage, InspectionsPage, OperationsPage } from "@/pages/ForestPages";
 import { ContractsCommercialPage } from "@/pages/ContractsCommercialPage";
 import { TicketsEnhancedPage } from "@/pages/TicketsEnhancedPage";
+import { StandsAuditedPage } from "@/pages/StandsAuditedPage";
 import NotFound from "@/pages/NotFound";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -14,7 +15,7 @@ function Shell({ children }: { children: React.ReactNode }) { return <DashboardL
 function Router() {
   return <Switch>
     <Route path="/">{() => <Shell><DashboardPage /></Shell>}</Route>
-    <Route path="/talhoes">{() => <Shell><StandsPage /></Shell>}</Route>
+    <Route path="/talhoes">{() => <Shell><StandsAuditedPage /></Shell>}</Route>
     <Route path="/tickets">{() => <Shell><TicketsEnhancedPage /></Shell>}</Route>
     <Route path="/operacoes">{() => <Shell><OperationsPage /></Shell>}</Route>
     <Route path="/contratos">{() => <Shell><ContractsCommercialPage /></Shell>}</Route>

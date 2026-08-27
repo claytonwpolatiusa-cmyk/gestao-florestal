@@ -26,3 +26,12 @@
 - [x] Ajustar a composição do PDF do painel para evitar sobreposição de tabelas em relatórios extensos.
 - [x] Validar os fluxos novos de exportação, contrato comercial e imagens de câmera em desktop e celular.
 - [x] Executar a construção de produção para validar os módulos de PDF, Excel, contratos e tickets com evidências.
+- [x] Implementar edição de propriedades, com histórico de alterações e identificação do usuário responsável.
+- [x] Registrar no cadastro de talhões a referência do arquivo de polígono e o formato geográfico utilizado.
+- [x] Definir a estrutura de abas Google Sheets e o modelo de dados para mapas, polígonos, talhões, tickets e despesas no AppSheet.
+- [x] Configurar, se houver conexão autorizada, a fonte Google Sheets, a view de Áreas em mapa, as camadas de talhões e as ações de navegação do AppSheet.
+- [x] Produzir guia operacional para importação de polígonos do Google Earth e manutenção de camadas no AppSheet.
+- [x] Validar os novos fluxos de edição, auditoria e integração cartográfica antes da entrega.
+- [x] Cobrir em teste unitário a autoria automática de criação e edição de propriedades.
+- [x] Corrigir o estado vazio da integração cartográfica na tela territorial para evitar um quadro de mapa sem conteúdo.
+- [ ] Validar um talhão real com centróide, KML hospedado e ações de ticket/despesa após o usuário fornecer a geometria e autorizar o teste de acesso.

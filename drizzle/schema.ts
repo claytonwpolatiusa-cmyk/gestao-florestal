@@ -31,6 +31,8 @@ export const properties = mysqlTable("properties", {
   state: varchar("state", { length: 2 }).notNull(),
   address: text("address"),
   notes: text("notes"),
+  createdByUserId: int("createdByUserId"),
+  updatedByUserId: int("updatedByUserId"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -46,9 +48,23 @@ export const stands = mysqlTable("stands", {
   operationalStatus: mysqlEnum("operationalStatus", ["ativo", "em_colheita", "bloqueado", "concluido"]).default("ativo").notNull(),
   polygonUrl: text("polygonUrl"),
   polygonGeoJson: text("polygonGeoJson"),
+  polygonFileUrl: text("polygonFileUrl"),
+  polygonFileKey: text("polygonFileKey"),
+  polygonFormat: mysqlEnum("polygonFormat", ["kml", "geojson", "kmz", "outro"]),
+  polygonVersion: varchar("polygonVersion", { length: 64 }),
   notes: text("notes"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export const propertyAuditLogs = mysqlTable("propertyAuditLogs", {
+  id: int("id").autoincrement().primaryKey(),
+  propertyId: int("propertyId").notNull(),
+  actorUserId: int("actorUserId").notNull(),
+  actorName: varchar("actorName", { length: 180 }),
+  action: mysqlEnum("action", ["criada", "atualizada"]).notNull(),
+  changeSummary: text("changeSummary").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
 export const contracts = mysqlTable("contracts", {
@@ -164,6 +180,7 @@ export const incidents = mysqlTable("incidents", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 export type Property = typeof properties.$inferSelect;
+export type PropertyAuditLog = typeof propertyAuditLogs.$inferSelect;
 export type Stand = typeof stands.$inferSelect;
 export type Contract = typeof contracts.$inferSelect;
 export type Ticket = typeof tickets.$inferSelect;

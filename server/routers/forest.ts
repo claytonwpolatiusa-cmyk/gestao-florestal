@@ -8,6 +8,15 @@ import { protectedProcedure, router } from "../_core/trpc";
 const dateSchema = z.coerce.date();
 const optionalId = z.number().int().positive().optional().nullable();
 const optionalText = (max: number) => z.string().trim().max(max).optional().nullable();
+const propertySchema = z.object({
+  name: z.string().trim().min(2).max(180),
+  registry: optionalText(120),
+  carNumber: optionalText(120),
+  municipality: z.string().trim().min(2).max(120),
+  state: z.string().trim().toUpperCase().length(2),
+  address: optionalText(3_000),
+  notes: optionalText(5_000),
+});
 
 const uploadSchema = z.object({
   dataBase64: z.string().max(8_100_000).optional(),
@@ -111,15 +120,13 @@ export const forestRouter = router({
 
   property: router({
     list: protectedProcedure.query(({ ctx }) => db.listProperties(ctx.user.id)),
-    create: protectedProcedure.input(z.object({
-      name: z.string().trim().min(2).max(180),
-      registry: optionalText(120),
-      carNumber: optionalText(120),
-      municipality: z.string().trim().min(2).max(120),
-      state: z.string().trim().toUpperCase().length(2),
-      address: optionalText(3_000),
-      notes: optionalText(5_000),
-    })).mutation(async ({ ctx, input }) => ({ id: await db.createProperty(ctx.user.id, input) })),
+    history: protectedProcedure.input(z.object({ id: z.number().int().positive() })).query(({ ctx, input }) => db.listPropertyAuditLogs(input.id, ctx.user.id)),
+    create: protectedProcedure.input(propertySchema).mutation(async ({ ctx, input }) => ({ id: await db.createProperty(ctx.user.id, { id: ctx.user.id, name: ctx.user.name }, input) })),
+    update: protectedProcedure.input(propertySchema.extend({ id: z.number().int().positive() })).mutation(async ({ ctx, input }) => {
+      const { id, ...values } = input;
+      await db.updateProperty(id, ctx.user.id, { id: ctx.user.id, name: ctx.user.name }, values);
+      return { success: true };
+    }),
   }),
 
   stand: router({
@@ -134,8 +141,15 @@ export const forestRouter = router({
       operationalStatus: z.enum(["ativo", "em_colheita", "bloqueado", "concluido"]).default("ativo"),
       polygonUrl: optionalText(2_000),
       polygonGeoJson: optionalText(30_000),
+      polygonFormat: z.enum(["kml", "geojson", "kmz", "outro"]).optional().nullable(),
+      polygonVersion: optionalText(64),
+      polygonFile: uploadSchema,
       notes: optionalText(5_000),
-    })).mutation(async ({ ctx, input }) => ({ id: await db.createStand(ctx.user.id, { ...input, areaHa: input.areaHa.toFixed(2) }) })),
+    })).mutation(async ({ ctx, input }) => {
+      const { polygonFile, ...values } = input;
+      const uploaded = await uploadFile(ctx.user.id, "poligonos", polygonFile);
+      return { id: await db.createStand(ctx.user.id, { ...values, areaHa: input.areaHa.toFixed(2), polygonFileUrl: uploaded.fileUrl || null, polygonFileKey: uploaded.fileKey || null }) };
+    }),
   }),
 
   contract: router({
