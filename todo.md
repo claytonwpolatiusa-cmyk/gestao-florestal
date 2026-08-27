@@ -16,3 +16,13 @@
 - [x] Modelar e exibir multas contratuais específicas para atraso e corte fora do polígono.
 - [x] Confirmar os vínculos de propriedade ao gravar documentos e ocorrências associados a talhões ou contratos.
 - [x] Validar compilação, testes unitários e fluxos essenciais de interface antes da entrega.
+- [x] Segmentar Pinus e Eucalipto com cores, indicadores e sinais visuais consistentes.
+- [x] Registrar modalidade comercial do contrato como venda do talhão por preço fixo ou retirada por tonelada, com orientação para desbaste.
+- [x] Permitir anexar imagens de câmera de trilha aos tickets de pesagem.
+- [x] Exibir alertas visuais para vencimentos próximos de contratos e tickets pendentes de pesagem.
+- [x] Exportar relatório filtrado do painel em PDF e Excel.
+- [x] Exportar dados de contratos em PDF e Excel.
+- [x] Ampliar testes e validar os novos fluxos em desktop e celular.
+- [x] Ajustar a composição do PDF do painel para evitar sobreposição de tabelas em relatórios extensos.
+- [x] Validar os fluxos novos de exportação, contrato comercial e imagens de câmera em desktop e celular.
+- [x] Executar a construção de produção para validar os módulos de PDF, Excel, contratos e tickets com evidências.

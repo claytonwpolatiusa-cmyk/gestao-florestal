@@ -157,7 +157,7 @@ export async function updateContractStatus(id: number, ownerId: number, status: 
 export async function listTickets(ownerId: number) {
   const db = await requireDb();
   return db
-    .select({ ticket: tickets, standCode: stands.code, contractCode: contracts.code, propertyName: properties.name })
+    .select({ ticket: tickets, standCode: stands.code, contractCode: contracts.code, ticketGraceDays: contracts.ticketGraceDays, propertyName: properties.name })
     .from(tickets)
     .innerJoin(stands, eq(tickets.standId, stands.id))
     .innerJoin(properties, eq(stands.propertyId, properties.id))

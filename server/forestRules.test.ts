@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calculateDelayPenalty, calculateOperationTotals } from "./forestRules";
+import { calculateDelayPenalty, calculateOperationTotals, isTicketOverdue } from "./forestRules";
 
 describe("calculateOperationTotals", () => {
   it("considera apenas lançamentos aprovados e tickets conferidos", () => {
@@ -25,5 +25,13 @@ describe("calculateDelayPenalty", () => {
     const deadline = new Date("2026-08-20T00:00:00Z");
     expect(calculateDelayPenalty(deadline, new Date("2026-08-23T12:00:00Z"), "500.00")).toBe(2000);
     expect(calculateDelayPenalty(deadline, new Date("2026-08-19T12:00:00Z"), "500.00")).toBe(0);
+  });
+});
+
+describe("isTicketOverdue", () => {
+  it("respeita a tolerância prevista no contrato para a entrega do ticket", () => {
+    const issuedAt = new Date("2026-08-20T08:00:00Z");
+    expect(isTicketOverdue(issuedAt, 3, new Date("2026-08-23T08:00:00Z"))).toBe(false);
+    expect(isTicketOverdue(issuedAt, 3, new Date("2026-08-23T08:00:01Z"))).toBe(true);
   });
 });

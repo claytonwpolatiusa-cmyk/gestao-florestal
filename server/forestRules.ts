@@ -39,3 +39,7 @@ export function calculateDelayPenalty(deadline: Date | null, checkedAt: Date, da
   const overdueDays = Math.ceil((checkedAt.getTime() - deadline.getTime()) / 86_400_000);
   return Number((Math.max(0, overdueDays) * Math.max(0, toFiniteNumber(dailyPenalty))).toFixed(2));
 }
+
+export function isTicketOverdue(issuedAt: Date, graceDays: number, checkedAt = new Date()): boolean {
+  return checkedAt.getTime() - issuedAt.getTime() > Math.max(1, graceDays) * 86_400_000;
+}

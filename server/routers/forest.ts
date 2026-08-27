@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import * as db from "../db";
-import { calculateOperationTotals } from "../forestRules";
+import { calculateOperationTotals, isTicketOverdue } from "../forestRules";
 import { storagePut } from "../storage";
 import { protectedProcedure, router } from "../_core/trpc";
 
@@ -65,6 +65,7 @@ export const forestRouter = router({
     const filteredStands = selectedStandId ? allStands.filter(item => item.stand.id === selectedStandId) : allStands;
     const filteredContracts = allContracts.filter(item => !selectedStandId || item.contract.standId === selectedStandId);
     const filteredIncidents = allIncidents.filter(item => matchesStand(item.incident.standId) && matchesMonth(item.incident.occurredAt));
+    const overdueTickets = filteredTickets.filter(item => item.ticket.status === "pendente" && isTicketOverdue(item.ticket.issuedAt, item.ticketGraceDays));
     const operationTotals = calculateOperationTotals(filteredLedger.map(item => item.entry), filteredTickets.map(item => item.ticket));
     const approvedEntries = filteredLedger.filter(item => item.entry.status === "aprovado");
 
@@ -94,6 +95,7 @@ export const forestRouter = router({
         revenue: operationTotals.revenue,
         cost: operationTotals.cost,
         pendingTickets: operationTotals.pendingTickets,
+        overdueTickets: overdueTickets.length,
         openIncidents: filteredIncidents.filter(item => item.incident.status !== "resolvida").length,
         activeContracts: filteredContracts.filter(item => item.contract.status === "ativo").length,
       },
@@ -101,6 +103,7 @@ export const forestRouter = router({
       expenseByCategory,
       dueSoon,
       recentTickets: filteredTickets.slice(0, 5),
+      overdueTickets: overdueTickets.slice(0, 5),
       openIncidents: filteredIncidents.filter(item => item.incident.status !== "resolvida").slice(0, 5),
       filterOptions: allStands.map(item => ({ id: item.stand.id, code: item.stand.code, propertyName: item.propertyName })),
     };
@@ -144,6 +147,7 @@ export const forestRouter = router({
       buyerName: z.string().trim().min(2).max(180),
       buyerDocument: optionalText(32),
       type: z.enum(["por_tonelada", "preco_fixo"]),
+      harvestType: z.enum(["primeiro_desbaste", "segundo_desbaste", "corte_raso", "outro"]).default("corte_raso"),
       status: z.enum(["rascunho", "ativo", "suspenso", "encerrado", "rescindido"]).default("rascunho"),
       pricePerTon: z.coerce.number().nonnegative().optional().nullable(),
       fixedValue: z.coerce.number().nonnegative().optional().nullable(),
@@ -155,6 +159,7 @@ export const forestRouter = router({
       dailyDelayPenalty: z.coerce.number().nonnegative().optional().nullable(),
       cutOutsidePenalty: z.coerce.number().nonnegative().optional().nullable(),
       missingTicketPenaltyPercent: z.coerce.number().min(0).max(100).optional().nullable(),
+      ticketGraceDays: z.coerce.number().int().min(1).max(30).default(3),
       notes: optionalText(5_000),
       file: uploadSchema,
     })).mutation(async ({ ctx, input }) => {
@@ -196,10 +201,18 @@ export const forestRouter = router({
       status: z.enum(["pendente", "conferido", "divergente", "recusado"]).default("pendente"),
       notes: optionalText(3_000),
       file: uploadSchema,
+      trailImages: z.array(z.object({
+        dataBase64: z.string().max(8_100_000),
+        fileName: z.string().trim().max(180),
+        mimeType: z.string().trim().max(100),
+      })).max(4).optional(),
     })).mutation(async ({ ctx, input }) => {
-      const { file, netWeightTons, ...values } = input;
+      const { file, trailImages = [], netWeightTons, ...values } = input;
       const uploaded = await uploadFile(ctx.user.id, "tickets", file);
-      return { id: await db.createTicket(ctx.user.id, { ...values, netWeightTons: netWeightTons.toFixed(3), fileUrl: uploaded.fileUrl || null, fileKey: uploaded.fileKey || null }) };
+      const trailUploads = await Promise.all(trailImages.map((image, index) => uploadFile(ctx.user.id, `cameras-trilha-${index + 1}`, image)));
+      const trailCameraImageUrls = trailUploads.map(item => item.fileUrl).filter((url): url is string => Boolean(url));
+      const trailCameraImageKeys = trailUploads.map(item => item.fileKey).filter((key): key is string => Boolean(key));
+      return { id: await db.createTicket(ctx.user.id, { ...values, netWeightTons: netWeightTons.toFixed(3), fileUrl: uploaded.fileUrl || null, fileKey: uploaded.fileKey || null, trailCameraImageUrls: trailCameraImageUrls.length ? JSON.stringify(trailCameraImageUrls) : null, trailCameraImageKeys: trailCameraImageKeys.length ? JSON.stringify(trailCameraImageKeys) : null }) };
     }),
     updateStatus: protectedProcedure.input(z.object({
       id: z.number().int().positive(),

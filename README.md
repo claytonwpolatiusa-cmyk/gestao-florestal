@@ -11,10 +11,10 @@ O acesso é autenticado e os registros ficam isolados por usuário. Arquivos env
 | Módulo | Função principal | Controles incluídos |
 |---|---|---|
 | **Visão geral** | Consolidar indicadores e prioridades da operação. | Toneladas conferidas, receita, custo, tickets pendentes, alertas, prazos próximos e gráficos. |
-| **Talhões** | Cadastrar propriedades, talhões, espécies, áreas e ciclo. | Status operacional, vínculo de polígono, campo GeoJSON/coordenadas e mapa de referência regional. |
-| **Tickets de balança** | Registrar cada carga e seu comprovante. | Talhão, contrato, placa, destino, tonelagem, foto/PDF e conferência do ticket. |
+| **Talhões** | Cadastrar propriedades, talhões, espécies, áreas e ciclo. | Status operacional, vínculo de polígono, campo GeoJSON/coordenadas, mapa de referência regional e distinção visual entre **Pinus** e **Eucalipto**. |
+| **Tickets de balança** | Registrar cada carga e seu comprovante. | Talhão, contrato, placa, destino, tonelagem, comprovante, até quatro imagens de câmeras de trilha e alerta de atraso. |
 | **Caixa e operações** | Registrar receitas e despesas. | Categorias, tonelagem, documento anexo, situação pendente/aprovada/rejeitada e saldo operacional. |
-| **Contratos** | Controlar venda por tonelada e preço fixo. | Garantias, prazos, valores, arquivo assinado, multa diária, multa por corte fora do polígono e percentual por ticket sem comprovação. |
+| **Contratos** | Controlar venda do talhão e retirada por tonelada. | Modalidade comercial, identificação de desbaste/corte raso, garantias, prazos, valores, prazo para tickets, arquivo assinado, multas e exportação em PDF/Excel. |
 | **Arquivos** | Organizar documentos da atividade. | Contratos, relatórios, licenças, garantias, tarefas e demais documentos vinculados à operação. |
 | **Vistorias** | Registrar verificações de campo. | Infraestrutura, segurança, meio ambiente, colheita e entrega final, com evidências. |
 | **Ocorrências** | Formalizar riscos e não conformidades. | Categoria, gravidade, status, descrição e evidência de acesso, ticket, chuva, incêndio, ambiente e segurança. |
@@ -41,6 +41,7 @@ O acesso é autenticado e os registros ficam isolados por usuário. Arquivos env
 | **Produção por talhão** | Soma dos tickets conferidos agrupados por talhão. |
 | **Despesas por categoria** | Soma das despesas aprovadas, agrupadas por categoria. |
 | **Prazos contratuais** | Contratos ativos ou suspensos com vencimento em até trinta dias, inclusive vencidos. |
+| **Tickets atrasados** | Tickets pendentes cujo prazo de conferência ultrapassou a quantidade de dias definida no contrato. |
 
 ## Integrações com Google
 

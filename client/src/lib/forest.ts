@@ -1,5 +1,7 @@
 export const labels = {
   species: { pinus: "Pinus", eucalipto: "Eucalipto" },
+  commercialType: { por_tonelada: "Retirada por tonelada", preco_fixo: "Venda do talhão / preço fixo" },
+  harvestType: { primeiro_desbaste: "1º desbaste", segundo_desbaste: "2º desbaste", corte_raso: "Corte raso", outro: "Outro" },
   cycle: { aguardando: "Aguardando", primeiro_desbaste: "1º desbaste", segundo_desbaste: "2º desbaste", corte_raso: "Corte raso" },
   standStatus: { ativo: "Ativo", em_colheita: "Em colheita", bloqueado: "Bloqueado", concluido: "Concluído" },
   contractType: { por_tonelada: "Por tonelada", preco_fixo: "Preço fixo" },
@@ -40,7 +42,9 @@ export function inputDateTime(value = new Date()) {
   return new Date(value.getTime() - timezoneOffset).toISOString().slice(0, 16);
 }
 
-export async function readUpload(file?: File | null) {
+export type UploadPayload = { dataBase64: string; fileName: string; mimeType: string };
+
+export async function readUpload(file?: File | null): Promise<UploadPayload | undefined> {
   if (!file) return undefined;
   if (file.size > 6_000_000) throw new Error("O arquivo deve ter até 6 MB.");
   const dataBase64 = await new Promise<string>((resolve, reject) => {
@@ -50,6 +54,11 @@ export async function readUpload(file?: File | null) {
     reader.readAsDataURL(file);
   });
   return { dataBase64, fileName: file.name, mimeType: file.type || "application/octet-stream" };
+}
+
+export async function readUploads(files: File[]): Promise<UploadPayload[]> {
+  const uploads = await Promise.all(files.map(file => readUpload(file)));
+  return uploads.filter((upload): upload is UploadPayload => Boolean(upload));
 }
 
 export function statusTone(value: string) {

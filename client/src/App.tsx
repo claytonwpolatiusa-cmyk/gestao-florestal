@@ -1,8 +1,9 @@
 import { Toaster } from "@/components/ui/sonner";
 import DashboardLayout from "@/components/DashboardLayout";
 import ErrorBoundary from "@/components/ErrorBoundary";
-import { DashboardPage, DocumentsPage, IncidentsPage, InspectionsPage, OperationsPage, StandsPage, TicketsPage } from "@/pages/ForestPages";
-import { ContractsFinePage } from "@/pages/ContractsFinePage";
+import { DashboardPage, DocumentsPage, IncidentsPage, InspectionsPage, OperationsPage, StandsPage } from "@/pages/ForestPages";
+import { ContractsCommercialPage } from "@/pages/ContractsCommercialPage";
+import { TicketsEnhancedPage } from "@/pages/TicketsEnhancedPage";
 import NotFound from "@/pages/NotFound";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -14,9 +15,9 @@ function Router() {
   return <Switch>
     <Route path="/">{() => <Shell><DashboardPage /></Shell>}</Route>
     <Route path="/talhoes">{() => <Shell><StandsPage /></Shell>}</Route>
-    <Route path="/tickets">{() => <Shell><TicketsPage /></Shell>}</Route>
+    <Route path="/tickets">{() => <Shell><TicketsEnhancedPage /></Shell>}</Route>
     <Route path="/operacoes">{() => <Shell><OperationsPage /></Shell>}</Route>
-    <Route path="/contratos">{() => <Shell><ContractsFinePage /></Shell>}</Route>
+    <Route path="/contratos">{() => <Shell><ContractsCommercialPage /></Shell>}</Route>
     <Route path="/arquivos">{() => <Shell><DocumentsPage /></Shell>}</Route>
     <Route path="/vistorias">{() => <Shell><InspectionsPage /></Shell>}</Route>
     <Route path="/ocorrencias">{() => <Shell><IncidentsPage /></Shell>}</Route>
