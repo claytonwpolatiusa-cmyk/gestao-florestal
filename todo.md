@@ -77,3 +77,15 @@
 - [ ] Testar a rota `/api/delegated-login` para sucesso e erros amigáveis em códigos inválidos, expirados e revogados.
 - [ ] Validar que a listagem real retorna somente códigos não expirados e não revogados.
 - [ ] Validar posteriormente o login por código delegado em janela anônima/outro navegador, confirmando abertura do painel com o mesmo nível do titular.
+
+## Refinamento visual e comercial — Treeway Forest
+
+- [x] Redesenhar a landing pública com estética premium de reflorestamento, atmosfera americana moderna e linguagem principalmente em português.
+- [x] Remover referências a Porto União e União da Vitória da apresentação pública e da comunicação comercial.
+- [x] Aplicar sistema visual com verde profundo, laranja queimado, linhas topográficas, elementos fluidos e microanimações acessíveis.
+- [x] Reforçar a narrativa de solução, confiança, controle da floresta e retorno operacional sem inventar depoimentos ou avaliações.
+- [x] Elevar a experiência de compra da assinatura mensal de R$ 97 com desconto de R$ 390 por R$ 97 e apresentação comercial transparente.
+- [x] Validar landing, compra e responsividade em desktop e celular após o redesenho.
+- [x] Refinar a landing pública para uma identidade Treeway mais proprietária e premium, reduzindo aparência de SaaS genérico.
+- [x] Fortalecer motivos recorrentes de manejo florestal, topografia, parcelas e hierarquia tipográfica na experiência pública.
+- [x] Validar a landing redesenhada também em viewport móvel e corrigir eventuais problemas encontrados.

@@ -19,6 +19,7 @@ function Router() {
   return <Switch>
     <Route path="/">{() => loading ? null : user ? <Shell><DashboardPage /></Shell> : <LandingPage />}</Route>
     <Route path="/comprar" component={PurchasePage} />
+    <Route path="/apresentacao" component={LandingPage} />
     <Route path="/acesso" component={DelegatedLoginPage} />
     <Route path="/perfil">{() => <Shell><AccountPage /></Shell>}</Route>
     <Route path="/talhoes">{() => <Shell><StandsAuditedPage /></Shell>}</Route>
