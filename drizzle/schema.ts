@@ -21,6 +21,16 @@ export const users = mysqlTable("users", {
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
 });
 
+export const delegatedAccessCodes = mysqlTable("delegatedAccessCodes", {
+  id: int("id").autoincrement().primaryKey(),
+  ownerUserId: int("ownerUserId").notNull(),
+  codeHash: varchar("codeHash", { length: 128 }).notNull().unique(),
+  expiresAt: timestamp("expiresAt").notNull(),
+  revokedAt: timestamp("revokedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  lastUsedAt: timestamp("lastUsedAt"),
+});
+
 export const properties = mysqlTable("properties", {
   id: int("id").autoincrement().primaryKey(),
   ownerId: int("ownerId").notNull(),

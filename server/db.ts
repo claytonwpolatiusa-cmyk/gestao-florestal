@@ -12,6 +12,7 @@ import {
   tickets,
   type InsertUser,
   users,
+  delegatedAccessCodes,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -72,6 +73,17 @@ export async function updateUserProfile(openId: string, values: { name: string; 
   const db = await requireDb();
   await db.update(users).set({ name: values.name, email: values.email }).where(eq(users.openId, openId));
   return getUserByOpenId(openId);
+}
+
+export async function createDelegatedCode(ownerUserId: number, codeHash: string, expiresAt: Date) {
+  const db = await requireDb();
+  const [created] = await db.insert(delegatedAccessCodes).values({ ownerUserId, codeHash, expiresAt }).$returningId();
+  return created.id;
+}
+
+export async function revokeDelegatedCodes(ownerUserId: number) {
+  const db = await requireDb();
+  await db.update(delegatedAccessCodes).set({ revokedAt: new Date() }).where(eq(delegatedAccessCodes.ownerUserId, ownerUserId));
 }
 
 export async function listProperties(ownerId: number) {
