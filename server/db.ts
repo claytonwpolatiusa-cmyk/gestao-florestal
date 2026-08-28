@@ -1,4 +1,4 @@
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, gt, isNull } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
   contracts,
@@ -88,7 +88,23 @@ export async function revokeDelegatedCodes(ownerUserId: number) {
 
 export async function listActiveDelegatedCodes(ownerUserId: number) {
   const db = await requireDb();
-  return db.select({ id: delegatedAccessCodes.id, expiresAt: delegatedAccessCodes.expiresAt, createdAt: delegatedAccessCodes.createdAt }).from(delegatedAccessCodes).where(eq(delegatedAccessCodes.ownerUserId, ownerUserId));
+  return db.select({ id: delegatedAccessCodes.id, expiresAt: delegatedAccessCodes.expiresAt, createdAt: delegatedAccessCodes.createdAt }).from(delegatedAccessCodes).where(and(eq(delegatedAccessCodes.ownerUserId, ownerUserId), isNull(delegatedAccessCodes.revokedAt), gt(delegatedAccessCodes.expiresAt, new Date())));
+}
+
+export async function consumeDelegatedCode(codeHash: string) {
+  const db = await requireDb();
+  const rows = await db.select().from(delegatedAccessCodes).where(eq(delegatedAccessCodes.codeHash, codeHash)).limit(1);
+  const row = rows[0];
+  if (!row || row.revokedAt || row.expiresAt.getTime() <= Date.now()) return undefined;
+  await db.update(delegatedAccessCodes).set({ lastUsedAt: new Date() }).where(eq(delegatedAccessCodes.id, row.id));
+  return getUserById(row.ownerUserId);
+}
+
+export async function getUserById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db.select().from(users).where(eq(users.id, id)).limit(1);
+  return rows[0];
 }
 
 export async function listProperties(ownerId: number) {

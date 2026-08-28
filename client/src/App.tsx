@@ -6,7 +6,7 @@ import { ContractsCommercialPage } from "@/pages/ContractsCommercialPage";
 import { TicketsEnhancedPage } from "@/pages/TicketsEnhancedPage";
 import { StandsAuditedPage } from "@/pages/StandsAuditedPage";
 import NotFound from "@/pages/NotFound";
-import { LandingPage, PurchasePage, AccountPage } from "@/pages/PublicPages";
+import { LandingPage, PurchasePage, AccountPage, DelegatedLoginPage } from "@/pages/PublicPages";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -19,6 +19,7 @@ function Router() {
   return <Switch>
     <Route path="/">{() => loading ? null : user ? <Shell><DashboardPage /></Shell> : <LandingPage />}</Route>
     <Route path="/comprar" component={PurchasePage} />
+    <Route path="/acesso" component={DelegatedLoginPage} />
     <Route path="/perfil">{() => <Shell><AccountPage /></Shell>}</Route>
     <Route path="/talhoes">{() => <Shell><StandsAuditedPage /></Shell>}</Route>
     <Route path="/tickets">{() => <Shell><TicketsEnhancedPage /></Shell>}</Route>

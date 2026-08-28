@@ -65,6 +65,15 @@
 - [x] Criar landing page pública antes do login, em português, voltada a produtores de pinus e eucalipto, explicando público, problemas resolvidos, funcionalidades e benefício operacional.
 - [x] Adicionar imagens/visuais explicativos na apresentação pública sem inserir depoimentos ou avaliações fictícias.
 - [x] Adicionar área de perfil/configurações para dados da conta e orientações de recuperação de e-mail e senha.
-- [ ] Implementar acesso delegado seguro por códigos temporários no servidor, com escolha de duração, expiração, revogação e registro de auditoria; nunca exibir senha do titular. A interface de preparação já está criada.
+- [x] Implementar acesso delegado seguro por códigos temporários no servidor, com escolha de duração, expiração, revogação e registro de uso; nunca exibir senha do titular. A validação ponta a ponta permanece pendente.
 - [x] Criar página de compra com formulário de nome, e-mail e telefone, preço promocional de R$ 390 riscado por R$ 97 mensais e pacote único com tudo incluído.
 - [ ] Testar os fluxos públicos, login, perfil, acesso delegado, compra e responsividade em desktop e celular.
+- [x] Implementar login por código delegado com o mesmo nível de acesso do titular, incluindo validação segura, expiração, revogação e uso controlado; a validação ponta a ponta permanece pendente.
+- [x] Filtrar na listagem somente códigos delegados não expirados e não revogados.
+- [x] Adicionar testes automatizados para a política de códigos delegados: normalização/hash, validade, revogação, expiração e reutilização controlada.
+- [x] Tratar códigos inválidos, expirados ou revogados com mensagem amigável na tela `/acesso`.
+- [x] Definir e implementar política explícita de uso controlado dos códigos delegados — reutilizável até expiração ou revogação — e refletir essa regra na interface.
+- [ ] Testar a implementação real de acesso delegado no banco: criação, listagem, revogação, expiração e consumo.
+- [ ] Testar a rota `/api/delegated-login` para sucesso e erros amigáveis em códigos inválidos, expirados e revogados.
+- [ ] Validar que a listagem real retorna somente códigos não expirados e não revogados.
+- [ ] Validar posteriormente o login por código delegado em janela anônima/outro navegador, confirmando abertura do painel com o mesmo nível do titular.

@@ -2,6 +2,7 @@ import { COOKIE_NAME, ONE_YEAR_MS, OAUTH_STATE_COOKIE, decodeOAuthState } from "
 import { parse as parseCookieHeader } from "cookie";
 import type { Express, Request, Response } from "express";
 import * as db from "../db";
+import { createHash } from "node:crypto";
 import { getSessionCookieOptions } from "./cookies";
 import { sdk } from "./sdk";
 
@@ -11,6 +12,18 @@ function getQueryParam(req: Request, key: string): string | undefined {
 }
 
 export function registerOAuthRoutes(app: Express) {
+  app.get("/api/delegated-login", async (req: Request, res: Response) => {
+    const rawCode = getQueryParam(req, "code");
+    if (!rawCode || rawCode.length > 32) { res.redirect(302, "/acesso?error=Código%20inválido"); return; }
+    try {
+      const owner = await db.consumeDelegatedCode(createHash("sha256").update(rawCode.trim().toUpperCase()).digest("hex"));
+      if (!owner) { res.redirect(302, "/acesso?error=Código%20expirado%2C%20revogado%20ou%20inválido"); return; }
+      const sessionToken = await sdk.createSessionToken(owner.openId, { name: owner.name || "", expiresInMs: ONE_YEAR_MS });
+      res.cookie(COOKIE_NAME, sessionToken, { ...getSessionCookieOptions(req), maxAge: ONE_YEAR_MS });
+      res.redirect(302, "/");
+    } catch (error) { console.error("[Delegated login] failed", error); res.redirect(302, "/acesso?error=Não%20foi%20possível%20autenticar"); }
+  });
+
   app.get("/api/oauth/callback", async (req: Request, res: Response) => {
     const code = getQueryParam(req, "code");
     const state = getQueryParam(req, "state");
