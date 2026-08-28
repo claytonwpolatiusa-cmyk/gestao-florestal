@@ -86,6 +86,11 @@ export async function revokeDelegatedCodes(ownerUserId: number) {
   await db.update(delegatedAccessCodes).set({ revokedAt: new Date() }).where(eq(delegatedAccessCodes.ownerUserId, ownerUserId));
 }
 
+export async function listActiveDelegatedCodes(ownerUserId: number) {
+  const db = await requireDb();
+  return db.select({ id: delegatedAccessCodes.id, expiresAt: delegatedAccessCodes.expiresAt, createdAt: delegatedAccessCodes.createdAt }).from(delegatedAccessCodes).where(eq(delegatedAccessCodes.ownerUserId, ownerUserId));
+}
+
 export async function listProperties(ownerId: number) {
   const db = await requireDb();
   return db.select().from(properties).where(eq(properties.ownerId, ownerId)).orderBy(desc(properties.updatedAt));
