@@ -35,3 +35,18 @@
 - [x] Cobrir em teste unitário a autoria automática de criação e edição de propriedades.
 - [x] Corrigir o estado vazio da integração cartográfica na tela territorial para evitar um quadro de mapa sem conteúdo.
 - [ ] Validar um talhão real com centróide, KML hospedado e ações de ticket/despesa após o usuário fornecer a geometria e autorizar o teste de acesso.
+- [x] Modelar contas a receber com situação de recebimento total, parcial e em aberto, incluindo saldo pendente e vencimento.
+- [x] Modelar contas a pagar com fornecedor, situação de pagamento, saldo pendente e vencimento.
+- [ ] Criar parâmetros de custo recorrente e parcelamento com geração controlada de despesas futuras.
+- [x] Calcular e exibir o saldo de caixa realizado com receitas recebidas menos despesas pagas.
+- [x] Atualizar as fontes Google Sheets/AppSheet e preparar a base de indicadores para Looker Studio.
+- [ ] Cobrir as regras financeiras adicionadas com testes e validar a integração antes da entrega.
+
+- [x] Salvar no AppSheet as visões Contas a Receber, Contas a Pagar, Custos Fixos e Parcelamentos e Caixa Realizado.
+- [x] Confirmar no preview do AppSheet o menu financeiro e os cinco indicadores de Caixa Realizado, sem dados fictícios.
+- [x] Verificar no Google Sheets as fórmulas de saldo pendente, status de receitas/despesas e indicadores de caixa.
+- [x] Executar `pnpm check`, `pnpm test` e `pnpm build` após a atualização documental e financeira.
+- [ ] Validar a execução de `Gerar próxima parcela` com uma recorrência real autorizada pelo usuário, sem inserir dados fictícios.
+- [ ] Confirmar ou implementar um loop nativo que replique todas as X parcelas em uma única confirmação, caso essa operação seja necessária.
+- [ ] Criar o relatório do Looker Studio mediante abertura/autorização específica do usuário; a base para conexão está preparada.
+- [ ] Salvar checkpoint WebDev final após a revisão do checklist financeiro.
