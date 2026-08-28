@@ -56,3 +56,4 @@
 - [x] Adicionar testes automatizados para a lógica de recorrência/parcelamento, cobrindo geração, contadores, próxima data e bloqueio ao fim da série.
 - [ ] Validar no AppSheet os casos de segunda execução sem repetir a parcela anterior e ação indisponível quando não houver parcelas restantes.
 - [ ] Corrigir a condição de finalização da ação Gerar próxima parcela: com parcelas restantes, manter GerarParcelas ativo e permitir a próxima execução; só concluir em zero.
+- [ ] Ajustar a expressão final para usar o saldo já decrementado: `StatusGeracao = IF([ParcelasRestantes] > 0, "Em geração", "Concluído")` e `GerarParcelas = IF([ParcelasRestantes] > 0, TRUE, FALSE)`.
