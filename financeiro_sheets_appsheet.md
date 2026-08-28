@@ -28,13 +28,13 @@ Essa regra permite que o painel diferencie, sem ambiguidade, faturamento, recebi
 | `Despesas[SaldoPendente]` | `MAX(Valor − ValorPago; 0)` por fórmula de matriz na coluna de saldo. | Exibe exatamente o valor ainda devido ao credor. |
 | `IndicadoresFinanceiros[Saldo em Caixa Realizado]` | `SUM(Receitas!L2:L)-SUM(Despesas!Q2:Q)`. | Indicador de dinheiro realmente recebido menos dinheiro efetivamente pago. |
 
-Os cabeçalhos financeiros foram preservados nas abas existentes e as abas novas receberam cabeçalho, congelamento da primeira linha, identidade visual, quebra de texto e filtros. A planilha não recebeu dados fictícios.
+Os cabeçalhos financeiros foram preservados nas abas existentes e as abas novas receberam cabeçalho, congelamento da primeira linha, identidade visual, quebra de texto e filtros. Foi realizado um teste controlado, explicitamente marcado como `TESTE`, e os seus registros foram removidos ao final; portanto, a base voltou a ficar sem dados fictícios.
 
 ## Recorrência e parcelamento no AppSheet
 
 O fluxo operacional escolhido é o mais simples e acessível para a equipe de campo: o usuário cadastra uma linha em `RecorrenciasDespesas` e executa **Gerar próxima parcela** com confirmação explícita. A ação cria uma linha em `Despesas` com `RecorrenciaID`, `PropertyID`, `TalhaoID`, `Credor`, `Descricao`, `Valor`, `DataVencimento`, `ParcelaNumero` e `TotalParcelas`. Em seguida, atualiza os contadores, a próxima data, o status e a trava de geração.
 
-A geração atual é **uma parcela por clique**, não uma automação silenciosa nem um processo agendado. A recorrência é bloqueada quando não há parcelas restantes. A geração de todas as parcelas em uma única confirmação permanece uma melhoria futura, condicionada à validação de um loop nativo do AppSheet; não deve ser considerada concluída sem teste real.
+A geração atual é **uma parcela por clique**, não uma automação silenciosa nem um processo agendado. No primeiro teste controlado, a recorrência passou de `ParcelasGeradas = 0` e `ParcelasRestantes = 3` para `ParcelasGeradas = 1` e `ParcelasRestantes = 2`; a planilha registrou uma única despesa com `ParcelaNumero = 1`, `TotalParcelas = 3` e o mesmo `RecorrenciaID`, enquanto `ProximaParcela` avançou para `31/10/2026`. Isso confirma que uma execução gera a próxima parcela corrente e avança o controle, em vez de repetir a mesma parcela. Porém, no edge case com duas parcelas, a primeira execução marcou `GerarParcelas = N` e `StatusGeracao = Concluído` embora `ParcelasRestantes = 1`; portanto, a condição de finalização ainda precisa ser corrigida antes de afirmar que a segunda execução está liberada. A recorrência deve ser bloqueada somente quando não houver parcelas restantes. A geração de todas as parcelas em uma única confirmação permanece uma melhoria futura.
 
 A ação técnica de criação e a ação técnica de avanço ficam ocultas para evitar execução isolada. A ação agrupada visível exige confirmação e só fica disponível quando a recorrência está ativa, marcada para geração e possui parcelas restantes. Não foi criado bot de alteração ou bot agendado para esse requisito.
 
@@ -64,9 +64,11 @@ Na criação manual do relatório, selecionar **Google Sheets**, escolher a plan
 | Contas a pagar em aberto | Soma de `Despesas[SaldoPendente]`. |
 | Segmentação operacional | Filtros por `DataVencimento`, `PropertyID`, `TalhaoID`, `Cliente`, `Credor` e status. |
 
-## Limites e cuidados
+## Validação controlada e limites
 
-`MovimentosFinanceiros` permanece como livro auxiliar planejado para auditoria; o cálculo atual do caixa não depende de seu preenchimento automático. A validação de geometrias depende do envio posterior de um KML real pelo usuário. Não foram realizados lançamentos fictícios para testar o fluxo financeiro.
+`MovimentosFinanceiros` permanece como livro auxiliar planejado para auditoria; o cálculo atual do caixa não depende de seu preenchimento automático. A validação de geometrias depende do envio posterior de um KML real pelo usuário.
+
+Em 28/08/2026, foram realizados dois testes controlados no AppSheet. O primeiro usou o registro `TESTE-REC-20260828004146-60063`, com valor fictício de `R$ 1.234,56` e três parcelas; a ação criou exatamente uma despesa, avançou os contadores e atualizou a próxima data. O segundo usou `TESTE-REC-EDGE-20260828004740-18636`, com duas parcelas; após a primeira execução, foi identificado o erro de finalização prematura descrito acima. As linhas de ambos os testes foram excluídas atomicamente das abas `RecorrenciasDespesas` e `Despesas`, mantendo apenas os cabeçalhos. A validação confirma o caminho feliz da primeira parcela, mas não confirma ainda a segunda execução nem o bloqueio correto no fim da série; esses casos permanecem pendentes de correção no editor do AppSheet.
 
 ## Referências
 

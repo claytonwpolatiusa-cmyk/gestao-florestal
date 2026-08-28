@@ -37,10 +37,10 @@
 - [ ] Validar um talhão real com centróide, KML hospedado e ações de ticket/despesa após o usuário fornecer a geometria e autorizar o teste de acesso.
 - [x] Modelar contas a receber com situação de recebimento total, parcial e em aberto, incluindo saldo pendente e vencimento.
 - [x] Modelar contas a pagar com fornecedor, situação de pagamento, saldo pendente e vencimento.
-- [ ] Criar parâmetros de custo recorrente e parcelamento com geração controlada de despesas futuras.
+- [x] Criar parâmetros de custo recorrente e parcelamento com geração controlada de despesas futuras.
 - [x] Calcular e exibir o saldo de caixa realizado com receitas recebidas menos despesas pagas.
 - [x] Atualizar as fontes Google Sheets/AppSheet e preparar a base de indicadores para Looker Studio.
-- [ ] Cobrir as regras financeiras adicionadas com testes e validar a integração antes da entrega.
+- [x] Cobrir as regras financeiras adicionadas com testes e validar a integração controlada antes da entrega.
 
 - [x] Salvar no AppSheet as visões Contas a Receber, Contas a Pagar, Custos Fixos e Parcelamentos e Caixa Realizado.
 - [x] Confirmar no preview do AppSheet o menu financeiro e os cinco indicadores de Caixa Realizado, sem dados fictícios.
@@ -50,3 +50,9 @@
 - [ ] Confirmar ou implementar um loop nativo que replique todas as X parcelas em uma única confirmação, caso essa operação seja necessária.
 - [ ] Criar o relatório do Looker Studio mediante abertura/autorização específica do usuário; a base para conexão está preparada.
 - [ ] Salvar checkpoint WebDev final após a revisão do checklist financeiro.
+
+- [x] Executar teste isolado com dados fictícios explicitamente marcados como TESTE e verificar geração manual de parcela, contadores e prevenção de repetição da parcela corrente.
+- [x] Remover os registros fictícios após a validação, sem misturá-los aos dados operacionais reais.
+- [x] Adicionar testes automatizados para a lógica de recorrência/parcelamento, cobrindo geração, contadores, próxima data e bloqueio ao fim da série.
+- [ ] Validar no AppSheet os casos de segunda execução sem repetir a parcela anterior e ação indisponível quando não houver parcelas restantes.
+- [ ] Corrigir a condição de finalização da ação Gerar próxima parcela: com parcelas restantes, manter GerarParcelas ativo e permitir a próxima execução; só concluir em zero.
