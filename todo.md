@@ -57,3 +57,14 @@
 - [ ] Validar no AppSheet os casos de segunda execução sem repetir a parcela anterior e ação indisponível quando não houver parcelas restantes.
 - [ ] Corrigir a condição de finalização da ação Gerar próxima parcela: com parcelas restantes, manter GerarParcelas ativo e permitir a próxima execução; só concluir em zero.
 - [ ] Ajustar a expressão final para usar o saldo já decrementado: `StatusGeracao = IF([ParcelasRestantes] > 0, "Em geração", "Concluído")` e `GerarParcelas = IF([ParcelasRestantes] > 0, TRUE, FALSE)`.
+
+## Nova fase — Treeway Forest
+
+- [x] Renomear a marca visível da plataforma para Treeway Forest, incluindo título, navegação, login e metadados.
+- [x] Criar e integrar logo moderna com destaque visual para Treeway, incluindo favicon ou marca compacta quando aplicável.
+- [x] Criar landing page pública antes do login, em português, voltada a produtores de pinus e eucalipto, explicando público, problemas resolvidos, funcionalidades e benefício operacional.
+- [x] Adicionar imagens/visuais explicativos na apresentação pública sem inserir depoimentos ou avaliações fictícias.
+- [x] Adicionar área de perfil/configurações para dados da conta e orientações de recuperação de e-mail e senha.
+- [ ] Implementar acesso delegado seguro por códigos temporários no servidor, com escolha de duração, expiração, revogação e registro de auditoria; nunca exibir senha do titular. A interface de preparação já está criada.
+- [x] Criar página de compra com formulário de nome, e-mail e telefone, preço promocional de R$ 390 riscado por R$ 97 mensais e pacote único com tudo incluído.
+- [ ] Testar os fluxos públicos, login, perfil, acesso delegado, compra e responsividade em desktop e celular.

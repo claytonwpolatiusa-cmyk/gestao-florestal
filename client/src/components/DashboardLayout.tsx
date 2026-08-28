@@ -33,6 +33,7 @@ import {
   Scale,
   ScrollText,
   Trees,
+  UserRound,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -48,6 +49,7 @@ const menuItems = [
   { icon: FileText, label: "Arquivos", path: "/arquivos" },
   { icon: ClipboardCheck, label: "Vistorias", path: "/vistorias" },
   { icon: AlertTriangle, label: "Ocorrências", path: "/ocorrencias" },
+  { icon: UserRound, label: "Perfil e acesso", path: "/perfil" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "forest-sidebar-width";
@@ -75,7 +77,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="h-12 w-12 rounded-2xl bg-[#173f2e] text-white flex items-center justify-center mb-7">
             <Trees className="h-6 w-6" />
           </div>
-          <p className="text-xs uppercase tracking-[0.18em] text-[#71907c] font-semibold">Gestão florestal</p>
+          <p className="text-xs uppercase tracking-[0.18em] text-[#71907c] font-semibold">Treeway Forest</p>
           <h1 className="mt-3 text-3xl font-semibold tracking-tight text-[#143226]">Acesso protegido para sua operação.</h1>
           <p className="mt-4 text-sm leading-6 text-[#64756a]">Entre para gerir talhões, tickets, contratos, arquivos, vistorias e indicadores em um único ambiente.</p>
           <Button onClick={() => startLogin()} size="lg" className="mt-8 w-full bg-[#1f5d42] hover:bg-[#174b35] text-white">Entrar na plataforma</Button>
@@ -138,8 +140,8 @@ function DashboardLayoutContent({ children, setSidebarWidth }: { children: React
               </button>
               {!isCollapsed && (
                 <div className="min-w-0 flex items-center gap-2.5">
-                  <div className="h-9 w-9 rounded-xl bg-[#c3a667] text-[#173f2e] flex items-center justify-center"><Trees className="h-5 w-5" /></div>
-                  <div className="min-w-0"><p className="font-semibold tracking-tight leading-none">Gestão Florestal</p><p className="text-[11px] text-[#a8c6b1] mt-1 truncate">Operação e controle</p></div>
+                  <img src="/manus-storage/treeway-forest-logo_5b4a11f0.png" alt="" className="h-9 w-9 rounded-xl bg-[#c3a667] p-1.5" />
+                  <div className="min-w-0"><p className="font-semibold tracking-tight leading-none">Treeway Forest</p><p className="text-[11px] text-[#a8c6b1] mt-1 truncate">Operação e controle</p></div>
                 </div>
               )}
             </div>
@@ -172,7 +174,7 @@ function DashboardLayoutContent({ children, setSidebarWidth }: { children: React
         <div className={`absolute top-0 right-0 h-full w-1 cursor-col-resize hover:bg-white/30 ${isCollapsed ? "hidden" : ""}`} onMouseDown={() => !isCollapsed && setIsResizing(true)} />
       </div>
       <SidebarInset className="bg-[#f5f7f1] min-h-screen">
-        {isMobile && <div className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-[#dfe8dd] bg-[#f8faf6]/95 px-3 backdrop-blur"><div className="flex items-center gap-2"><SidebarTrigger className="rounded-lg" /><span className="font-medium text-[#173f2e]">{activeMenuItem?.label || "Gestão Florestal"}</span></div><Trees className="h-5 w-5 text-[#1f5d42]" /></div>}
+        {isMobile && <div className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-[#dfe8dd] bg-[#f8faf6]/95 px-3 backdrop-blur"><div className="flex items-center gap-2"><SidebarTrigger className="rounded-lg" /><span className="font-medium text-[#173f2e]">{activeMenuItem?.label || "Treeway Forest"}</span></div><span className="font-semibold tracking-tight text-[#1f5d42]">Treeway<span className="text-[#bd9a55]">.</span></span></div>}
         <main className="min-h-screen p-4 pb-24 sm:p-7 sm:pb-7 lg:p-9">{children}</main>
         {isMobile && <nav className="fixed bottom-0 left-0 right-0 z-40 grid grid-cols-5 border-t border-[#dfe8dd] bg-[#fbfcfa]/95 px-1 py-1.5 shadow-[0_-8px_28px_-18px_rgba(23,64,46,0.35)] backdrop-blur" aria-label="Atalhos de campo">{menuItems.slice(0, 5).map(item => { const active = location === item.path; return <button key={item.path} onClick={() => setLocation(item.path)} className={`flex min-h-12 flex-col items-center justify-center gap-1 rounded-lg text-[9px] font-semibold ${active ? "bg-[#e8f3e8] text-[#1f5d42]" : "text-[#74837a]"}`}><item.icon className="h-4 w-4" /><span className="max-w-[65px] truncate">{item.label.replace("Lançar ", "")}</span></button>; })}</nav>}
       </SidebarInset>

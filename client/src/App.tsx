@@ -6,6 +6,8 @@ import { ContractsCommercialPage } from "@/pages/ContractsCommercialPage";
 import { TicketsEnhancedPage } from "@/pages/TicketsEnhancedPage";
 import { StandsAuditedPage } from "@/pages/StandsAuditedPage";
 import NotFound from "@/pages/NotFound";
+import { LandingPage, PurchasePage, AccountPage } from "@/pages/PublicPages";
+import { useAuth } from "@/_core/hooks/useAuth";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { Route, Switch } from "wouter";
@@ -13,8 +15,11 @@ import { Route, Switch } from "wouter";
 function Shell({ children }: { children: React.ReactNode }) { return <DashboardLayout>{children}</DashboardLayout>; }
 
 function Router() {
+  const { user, loading } = useAuth();
   return <Switch>
-    <Route path="/">{() => <Shell><DashboardPage /></Shell>}</Route>
+    <Route path="/">{() => loading ? null : user ? <Shell><DashboardPage /></Shell> : <LandingPage />}</Route>
+    <Route path="/comprar" component={PurchasePage} />
+    <Route path="/perfil">{() => <Shell><AccountPage /></Shell>}</Route>
     <Route path="/talhoes">{() => <Shell><StandsAuditedPage /></Shell>}</Route>
     <Route path="/tickets">{() => <Shell><TicketsEnhancedPage /></Shell>}</Route>
     <Route path="/operacoes">{() => <Shell><OperationsPage /></Shell>}</Route>

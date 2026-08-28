@@ -68,6 +68,12 @@ export async function getUserByOpenId(openId: string) {
   return result[0];
 }
 
+export async function updateUserProfile(openId: string, values: { name: string; email: string }) {
+  const db = await requireDb();
+  await db.update(users).set({ name: values.name, email: values.email }).where(eq(users.openId, openId));
+  return getUserByOpenId(openId);
+}
+
 export async function listProperties(ownerId: number) {
   const db = await requireDb();
   return db.select().from(properties).where(eq(properties.ownerId, ownerId)).orderBy(desc(properties.updatedAt));
