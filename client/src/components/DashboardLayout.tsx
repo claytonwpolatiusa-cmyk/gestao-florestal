@@ -42,6 +42,7 @@ import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from "./DashboardLayoutSkeleton";
 import { Button } from "./ui/button";
+import { nextOnboardingEntryCount, shouldShowOnboarding } from "@/lib/onboarding";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Visão geral", path: "/" },
@@ -115,8 +116,8 @@ function DashboardLayoutContent({ children, setSidebarWidth }: { children: React
     const params = new URLSearchParams(window.location.search);
     const isTeamAccess = params.get("delegated") === "1" || localStorage.getItem("treeway-delegated-session") === "1";
     const entries = Number(localStorage.getItem("treeway-onboarding-entry-count") || "0");
-    if (isTeamAccess || entries < 3) {
-      localStorage.setItem("treeway-onboarding-entry-count", String(entries + 1));
+    if (shouldShowOnboarding(entries, isTeamAccess)) {
+      localStorage.setItem("treeway-onboarding-entry-count", String(nextOnboardingEntryCount(entries, isTeamAccess)));
       setShowOnboarding(true);
     }
   }, []);
