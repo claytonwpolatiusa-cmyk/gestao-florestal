@@ -89,3 +89,18 @@
 - [x] Refinar a landing pública para uma identidade Treeway mais proprietária e premium, reduzindo aparência de SaaS genérico.
 - [x] Fortalecer motivos recorrentes de manejo florestal, topografia, parcelas e hierarquia tipográfica na experiência pública.
 - [x] Validar a landing redesenhada também em viewport móvel e corrigir eventuais problemas encontrados.
+
+## Tutorial e onboarding visual
+
+- [x] Adicionar aba Tutorial no menu autenticado com roteiro visual das principais funcionalidades.
+- [x] Criar exemplos demonstrativos fictícios de uma propriedade, talhões, tickets, contratos e caixa, sempre rotulados como exemplo.
+- [x] Criar onboarding pulável nas três primeiras entradas da conta e em toda entrada por Acesso de equipe.
+- [x] Direcionar o onboarding para o Tutorial e permitir fechar com X ou pular sem bloquear a plataforma.
+- [x] Validar Tutorial, onboarding e responsividade em desktop e celular.
+- [x] Marcar explicitamente a sessão criada pelo login de equipe como delegada para acionar o onboarding em toda entrada por código.
+- [x] Validar o modal de onboarding com acesso de equipe simulado, incluindo X, pular e abertura do Tutorial.
+- [x] Validar o onboarding de equipe também em desktop.
+- [ ] Testar explicitamente fechar no X, pular por agora e abrir tutorial no onboarding simulado.
+- [x] Registrar evidência de navegação do cenário `/?delegated=1` para o Tutorial; o CTA está conectado a `/tutorial`.
+- [ ] Testar no onboarding simulado o botão “Abrir tutorial” e confirmar navegação efetiva para `/tutorial`.
+- [ ] Testar no onboarding simulado os controles “X” e “Pular por agora”, confirmando fechamento sem bloquear a plataforma.

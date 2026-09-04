@@ -7,6 +7,7 @@ import { TicketsEnhancedPage } from "@/pages/TicketsEnhancedPage";
 import { StandsAuditedPage } from "@/pages/StandsAuditedPage";
 import NotFound from "@/pages/NotFound";
 import { LandingPage, PurchasePage, AccountPage, DelegatedLoginPage } from "@/pages/PublicPages";
+import TutorialPage from "@/pages/TutorialPage";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -22,6 +23,7 @@ function Router() {
     <Route path="/apresentacao" component={LandingPage} />
     <Route path="/acesso" component={DelegatedLoginPage} />
     <Route path="/perfil">{() => <Shell><AccountPage /></Shell>}</Route>
+    <Route path="/tutorial">{() => <Shell><TutorialPage /></Shell>}</Route>
     <Route path="/talhoes">{() => <Shell><StandsAuditedPage /></Shell>}</Route>
     <Route path="/tickets">{() => <Shell><TicketsEnhancedPage /></Shell>}</Route>
     <Route path="/operacoes">{() => <Shell><OperationsPage /></Shell>}</Route>

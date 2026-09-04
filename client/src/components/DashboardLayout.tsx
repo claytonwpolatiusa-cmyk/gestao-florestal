@@ -23,6 +23,8 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { useIsMobile } from "@/hooks/useMobile";
 import {
   AlertTriangle,
+  ArrowRight,
+  BookOpen,
   ClipboardCheck,
   FileText,
   LayoutDashboard,
@@ -31,6 +33,7 @@ import {
   PanelLeft,
   ReceiptText,
   Scale,
+  WalletCards,
   ScrollText,
   Trees,
   UserRound,
@@ -49,6 +52,7 @@ const menuItems = [
   { icon: FileText, label: "Arquivos", path: "/arquivos" },
   { icon: ClipboardCheck, label: "Vistorias", path: "/vistorias" },
   { icon: AlertTriangle, label: "Ocorrências", path: "/ocorrencias" },
+  { icon: BookOpen, label: "Tutorial", path: "/tutorial" },
   { icon: UserRound, label: "Perfil e acesso", path: "/perfil" },
 ];
 
@@ -102,6 +106,20 @@ function DashboardLayoutContent({ children, setSidebarWidth }: { children: React
   const sidebarRef = useRef<HTMLDivElement>(null);
   const activeMenuItem = menuItems.find(item => item.path === location);
   const isMobile = useIsMobile();
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  useEffect(() => {
+    const sessionKey = "treeway-onboarding-shown-session";
+    if (sessionStorage.getItem(sessionKey)) return;
+    sessionStorage.setItem(sessionKey, "1");
+    const params = new URLSearchParams(window.location.search);
+    const isTeamAccess = params.get("delegated") === "1" || localStorage.getItem("treeway-delegated-session") === "1";
+    const entries = Number(localStorage.getItem("treeway-onboarding-entry-count") || "0");
+    if (isTeamAccess || entries < 3) {
+      localStorage.setItem("treeway-onboarding-entry-count", String(entries + 1));
+      setShowOnboarding(true);
+    }
+  }, []);
 
   useEffect(() => {
     if (isCollapsed) setIsResizing(false);
@@ -131,6 +149,7 @@ function DashboardLayoutContent({ children, setSidebarWidth }: { children: React
 
   return (
     <>
+      {showOnboarding && <OnboardingNotice onClose={() => setShowOnboarding(false)} onTutorial={() => { setShowOnboarding(false); setLocation("/tutorial"); }} />}
       <div className="relative" ref={sidebarRef}>
         <Sidebar collapsible="icon" className="border-r border-[#244a38]/10 !bg-[#153e2e] !text-[#edf5ef]" disableTransition={isResizing}>
           <SidebarHeader className="h-[90px] justify-center px-3">
@@ -180,4 +199,15 @@ function DashboardLayoutContent({ children, setSidebarWidth }: { children: React
       </SidebarInset>
     </>
   );
+}
+
+
+function OnboardingNotice({ onClose, onTutorial }: { onClose: () => void; onTutorial: () => void }) {
+  return <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0b2b20]/55 p-4 backdrop-blur-sm">
+    <div role="dialog" aria-modal="true" aria-labelledby="treeway-onboarding-title" className="relative w-full max-w-lg overflow-hidden rounded-[2rem] border border-white/20 bg-[#f8faf5] shadow-[0_35px_100px_-30px_rgba(11,43,32,.8)]">
+      <button aria-label="Fechar aviso" onClick={onClose} className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/75 text-[#496858] transition hover:bg-white"><span className="text-xl leading-none">×</span></button>
+      <div className="relative overflow-hidden bg-[#123b2c] px-7 pb-8 pt-8 text-white"><div className="absolute -right-16 -top-20 h-48 w-48 rounded-full border border-[#f08a4e]/30"/><div className="absolute -right-8 -top-12 h-32 w-32 rounded-full border border-[#f08a4e]/25"/><div className="relative"><div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#e16d32] shadow-lg"><BookOpen className="h-5 w-5"/></div><p className="mt-5 text-[10px] font-bold uppercase tracking-[.22em] text-[#f5b085]">Comece pelo caminho certo</p><h2 id="treeway-onboarding-title" className="mt-2 max-w-sm text-3xl font-semibold leading-tight tracking-[-.04em]">Veja como a Treeway organiza sua operação.</h2><p className="mt-3 max-w-md text-sm leading-6 text-white/65">Preparamos um tour rápido com exemplos visuais de propriedade, talhões, tickets, contratos e caixa.</p></div></div>
+      <div className="p-7"><div className="grid gap-3 sm:grid-cols-3"><div className="rounded-xl bg-[#e8f1e8] p-3"><MapPinned className="h-4 w-4 text-[#36734e]"/><p className="mt-2 text-xs font-semibold text-[#173e2e]">Mapa e talhões</p></div><div className="rounded-xl bg-[#fff1e8] p-3"><Scale className="h-4 w-4 text-[#d7672e]"/><p className="mt-2 text-xs font-semibold text-[#173e2e]">Campo e tickets</p></div><div className="rounded-xl bg-[#f0eee5] p-3"><WalletCards className="h-4 w-4 text-[#7b6d45]"/><p className="mt-2 text-xs font-semibold text-[#173e2e]">Caixa e gestão</p></div></div><div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end"><Button variant="outline" onClick={onClose}>Pular por agora</Button><Button onClick={onTutorial} className="bg-[#e16d32] text-white hover:bg-[#c95722]">Abrir tutorial <ArrowRight className="ml-2 h-4 w-4"/></Button></div></div>
+    </div>
+  </div>;
 }

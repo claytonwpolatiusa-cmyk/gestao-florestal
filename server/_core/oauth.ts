@@ -20,7 +20,7 @@ export function registerOAuthRoutes(app: Express) {
       if (!owner) { res.redirect(302, "/acesso?error=Código%20expirado%2C%20revogado%20ou%20inválido"); return; }
       const sessionToken = await sdk.createSessionToken(owner.openId, { name: owner.name || "", expiresInMs: ONE_YEAR_MS });
       res.cookie(COOKIE_NAME, sessionToken, { ...getSessionCookieOptions(req), maxAge: ONE_YEAR_MS });
-      res.redirect(302, "/");
+      res.redirect(302, "/?delegated=1");
     } catch (error) { console.error("[Delegated login] failed", error); res.redirect(302, "/acesso?error=Não%20foi%20possível%20autenticar"); }
   });
 
