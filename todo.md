@@ -116,3 +116,5 @@
 - [x] Persistir leads do hub de conteúdos em backend real, salvando nome, e-mail, WhatsApp e flags de consentimento.
 - [x] Tratar o formulário de captura com feedback real de carregamento, sucesso e erro e liberar a leitura somente após resposta bem-sucedida.
 - [ ] Executar validação funcional do formulário e checagem objetiva de acessibilidade da página `/conteudos`.
+- [x] Validar funcionalmente a captura autorizada do hub: mutation pública respondeu com sucesso e o banco confirmou conteúdo ativo, contato comercial desativado e dados normalizados.
+- [ ] Executar checagem objetiva de acessibilidade da página `/conteudos` com ferramenta dedicada.
