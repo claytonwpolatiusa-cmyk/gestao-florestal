@@ -104,3 +104,15 @@
 - [x] Registrar evidência de navegação do cenário `/?delegated=1` para o Tutorial; o CTA está conectado a `/tutorial`.
 - [ ] Testar no onboarding simulado o botão “Abrir tutorial” e confirmar navegação efetiva para `/tutorial`.
 - [ ] Testar no onboarding simulado os controles “X” e “Pular por agora”, confirmando fechamento sem bloquear a plataforma.
+
+## Conteúdo, confiança e funil público
+
+- [x] Adicionar seção pública de conteúdos e matérias curtas com foco em SEO para gestão de pinus, eucalipto, talhões, contratos e caixa.
+- [x] Criar páginas ou modais de leitura com bloqueio leve por cadastro de e-mail ou WhatsApp, sem impedir a apresentação principal.
+- [x] Adicionar consentimento explícito para receber atualizações e conteúdos exclusivos, com texto claro e opção separada para contato comercial.
+- [x] Criar seção Nossa história com narrativa institucional honesta, sem datas, clientes, números ou certificações inventados.
+- [x] Adicionar sinais de confiança profissionais: transparência, segurança, organização operacional, suporte e chamadas institucionais verificáveis.
+- [x] Validar SEO básico, navegação, responsividade, acessibilidade e formulário de captura na área pública.
+- [x] Persistir leads do hub de conteúdos em backend real, salvando nome, e-mail, WhatsApp e flags de consentimento.
+- [x] Tratar o formulário de captura com feedback real de carregamento, sucesso e erro e liberar a leitura somente após resposta bem-sucedida.
+- [ ] Executar validação funcional do formulário e checagem objetiva de acessibilidade da página `/conteudos`.

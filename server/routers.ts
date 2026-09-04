@@ -4,11 +4,21 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { z } from "zod";
-import { createDelegatedCode, listActiveDelegatedCodes, revokeDelegatedCodes, updateUserProfile } from "./db";
+import { createContentLead, createDelegatedCode, listActiveDelegatedCodes, revokeDelegatedCodes, updateUserProfile } from "./db";
 import { forestRouter } from "./routers/forest";
 
 export const appRouter = router({
   system: systemRouter,
+  content: router({
+    captureLead: publicProcedure.input(z.object({
+      name: z.string().trim().min(2).max(180),
+      email: z.string().email().max(320),
+      whatsapp: z.string().trim().max(32).optional().nullable(),
+      contentUpdatesConsent: z.literal(true),
+      commercialContactConsent: z.boolean().default(false),
+      source: z.string().trim().max(120).default("conteudos"),
+    })).mutation(({ input }) => createContentLead(input)),
+  }),
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {

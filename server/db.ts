@@ -13,6 +13,7 @@ import {
   type InsertUser,
   users,
   delegatedAccessCodes,
+  contentLeads,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -67,6 +68,19 @@ export async function getUserByOpenId(openId: string) {
   if (!db) return undefined;
   const result = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
   return result[0];
+}
+
+export async function createContentLead(values: { name: string; email: string; whatsapp?: string | null; contentUpdatesConsent: boolean; commercialContactConsent: boolean; source?: string }) {
+  const db = await requireDb();
+  const [created] = await db.insert(contentLeads).values({
+    name: values.name.trim(),
+    email: values.email.trim().toLowerCase(),
+    whatsapp: values.whatsapp?.trim() || null,
+    contentUpdatesConsent: values.contentUpdatesConsent ? 1 : 0,
+    commercialContactConsent: values.commercialContactConsent ? 1 : 0,
+    source: values.source?.trim() || "conteudos",
+  }).$returningId();
+  return { id: created.id };
 }
 
 export async function updateUserProfile(openId: string, values: { name: string; email: string }) {

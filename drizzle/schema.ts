@@ -31,6 +31,17 @@ export const delegatedAccessCodes = mysqlTable("delegatedAccessCodes", {
   lastUsedAt: timestamp("lastUsedAt"),
 });
 
+export const contentLeads = mysqlTable("contentLeads", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 180 }).notNull(),
+  email: varchar("email", { length: 320 }).notNull(),
+  whatsapp: varchar("whatsapp", { length: 32 }),
+  contentUpdatesConsent: int("contentUpdatesConsent").notNull().default(0),
+  commercialContactConsent: int("commercialContactConsent").notNull().default(0),
+  source: varchar("source", { length: 120 }).notNull().default("conteudos"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
 export const properties = mysqlTable("properties", {
   id: int("id").autoincrement().primaryKey(),
   ownerId: int("ownerId").notNull(),
@@ -189,6 +200,7 @@ export const incidents = mysqlTable("incidents", {
 
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
+export type ContentLead = typeof contentLeads.$inferSelect;
 export type Property = typeof properties.$inferSelect;
 export type PropertyAuditLog = typeof propertyAuditLogs.$inferSelect;
 export type Stand = typeof stands.$inferSelect;
