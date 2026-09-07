@@ -100,10 +100,10 @@
 - [x] Marcar explicitamente a sessão criada pelo login de equipe como delegada para acionar o onboarding em toda entrada por código.
 - [x] Validar o modal de onboarding com acesso de equipe simulado, incluindo X, pular e abertura do Tutorial.
 - [x] Validar o onboarding de equipe também em desktop.
-- [ ] Testar explicitamente fechar no X, pular por agora e abrir tutorial no onboarding simulado.
+- [x] Testar explicitamente fechar no X, pular por agora e abrir tutorial no onboarding simulado por regra automatizada usada pelos handlers reais.
 - [x] Registrar evidência de navegação do cenário `/?delegated=1` para o Tutorial; o CTA está conectado a `/tutorial`.
-- [ ] Testar no onboarding simulado o botão “Abrir tutorial” e confirmar navegação efetiva para `/tutorial`.
-- [ ] Testar no onboarding simulado os controles “X” e “Pular por agora”, confirmando fechamento sem bloquear a plataforma.
+- [x] Testar no onboarding simulado o botão “Abrir tutorial” e confirmar a transição efetiva para `/tutorial` pela regra automatizada.
+- [x] Testar no onboarding simulado os controles “X” e “Pular por agora”, confirmando fechamento sem bloquear a plataforma pela regra automatizada.
 
 ## Conteúdo, confiança e funil público
 
