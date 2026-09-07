@@ -15,6 +15,7 @@ import {
   delegatedAccessCodes,
   contentLeads,
   supportRequests,
+  subscriptionLeads,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -92,6 +93,19 @@ export async function createSupportRequest(values: { name: string; email: string
     phone: values.phone?.trim() || null,
     subject: values.subject.trim(),
     message: values.message.trim(),
+  }).$returningId();
+  return { id: created.id };
+}
+
+export async function createSubscriptionLead(values: { name: string; email: string; phone: string; activationContactConsent: boolean }) {
+  const db = await requireDb();
+  const [created] = await db.insert(subscriptionLeads).values({
+    name: values.name.trim(),
+    email: values.email.trim().toLowerCase(),
+    phone: values.phone.trim(),
+    promotionalMonthlyPriceCents: 29_700,
+    referenceMonthlyPriceCents: 59_700,
+    activationContactConsent: values.activationContactConsent ? 1 : 0,
   }).$returningId();
   return { id: created.id };
 }

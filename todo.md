@@ -131,3 +131,4 @@
 - [x] Informar na página `/atendimento` uma janela operacional de retorno realista e verificável, sem prometer disponibilidade não suportada.
 - [ ] Validar o formulário `/atendimento` ponta a ponta, incluindo envio pela interface e registro real em `supportRequests`.
 - [x] Preparar documento arquitetural independente para CapiLoop: split de pagamento, expiração automática, bloqueio de estoque e fluxo de disputa/reembolso.
+- [x] Persistir interesses de assinatura do plano promocional, com consentimento explícito de contato para ativação.

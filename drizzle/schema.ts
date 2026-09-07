@@ -53,6 +53,18 @@ export const supportRequests = mysqlTable("supportRequests", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
+export const subscriptionLeads = mysqlTable("subscriptionLeads", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 180 }).notNull(),
+  email: varchar("email", { length: 320 }).notNull(),
+  phone: varchar("phone", { length: 32 }).notNull(),
+  promotionalMonthlyPriceCents: int("promotionalMonthlyPriceCents").notNull(),
+  referenceMonthlyPriceCents: int("referenceMonthlyPriceCents").notNull(),
+  activationContactConsent: int("activationContactConsent").notNull().default(0),
+  status: mysqlEnum("status", ["novo", "contatado", "convertido", "encerrado"]).default("novo").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
 export const properties = mysqlTable("properties", {
   id: int("id").autoincrement().primaryKey(),
   ownerId: int("ownerId").notNull(),
