@@ -132,3 +132,4 @@
 - [ ] Validar o formulário `/atendimento` ponta a ponta, incluindo envio pela interface e registro real em `supportRequests`.
 - [x] Preparar documento arquitetural independente para CapiLoop: split de pagamento, expiração automática, bloqueio de estoque e fluxo de disputa/reembolso.
 - [x] Persistir interesses de assinatura do plano promocional, com consentimento explícito de contato para ativação.
+- [x] Separar rotas pesadas por carregamento sob demanda para reduzir o bundle inicial apontado pela build; o bundle principal caiu de cerca de 2,3 MB para cerca de 744 kB, com páginas em chunks próprios.

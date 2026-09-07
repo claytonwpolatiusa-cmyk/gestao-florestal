@@ -1,19 +1,33 @@
 import { Toaster } from "@/components/ui/sonner";
 import DashboardLayout from "@/components/DashboardLayout";
 import ErrorBoundary from "@/components/ErrorBoundary";
-import { DashboardPage, DocumentsPage, IncidentsPage, InspectionsPage, OperationsPage } from "@/pages/ForestPages";
-import { ContractsCommercialPage } from "@/pages/ContractsCommercialPage";
-import { TicketsEnhancedPage } from "@/pages/TicketsEnhancedPage";
-import { StandsAuditedPage } from "@/pages/StandsAuditedPage";
 import NotFound from "@/pages/NotFound";
-import { LandingPage, PurchasePage, AccountPage, DelegatedLoginPage } from "@/pages/PublicPages";
-import { FaqPage, SupportPage } from "@/pages/PublicSupportPages";
-import TutorialPage from "@/pages/TutorialPage";
-import PublicContentPage from "@/pages/PublicContentPage";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { Route, Switch } from "wouter";
+import { lazy, Suspense } from "react";
+
+const DashboardPage = lazy(() => import("@/pages/ForestPages").then(module => ({ default: module.DashboardPage })));
+const DocumentsPage = lazy(() => import("@/pages/ForestPages").then(module => ({ default: module.DocumentsPage })));
+const IncidentsPage = lazy(() => import("@/pages/ForestPages").then(module => ({ default: module.IncidentsPage })));
+const InspectionsPage = lazy(() => import("@/pages/ForestPages").then(module => ({ default: module.InspectionsPage })));
+const OperationsPage = lazy(() => import("@/pages/ForestPages").then(module => ({ default: module.OperationsPage })));
+const ContractsCommercialPage = lazy(() => import("@/pages/ContractsCommercialPage").then(module => ({ default: module.ContractsCommercialPage })));
+const TicketsEnhancedPage = lazy(() => import("@/pages/TicketsEnhancedPage").then(module => ({ default: module.TicketsEnhancedPage })));
+const StandsAuditedPage = lazy(() => import("@/pages/StandsAuditedPage").then(module => ({ default: module.StandsAuditedPage })));
+const LandingPage = lazy(() => import("@/pages/PublicPages").then(module => ({ default: module.LandingPage })));
+const PurchasePage = lazy(() => import("@/pages/PublicPages").then(module => ({ default: module.PurchasePage })));
+const AccountPage = lazy(() => import("@/pages/PublicPages").then(module => ({ default: module.AccountPage })));
+const DelegatedLoginPage = lazy(() => import("@/pages/PublicPages").then(module => ({ default: module.DelegatedLoginPage })));
+const FaqPage = lazy(() => import("@/pages/PublicSupportPages").then(module => ({ default: module.FaqPage })));
+const SupportPage = lazy(() => import("@/pages/PublicSupportPages").then(module => ({ default: module.SupportPage })));
+const TutorialPage = lazy(() => import("@/pages/TutorialPage"));
+const PublicContentPage = lazy(() => import("@/pages/PublicContentPage"));
+
+function RouteLoader() {
+  return <div className="flex min-h-[40vh] items-center justify-center bg-[#f7f8f3] text-sm font-medium text-[#6a7d70]">Carregando…</div>;
+}
 
 function Shell({ children }: { children: React.ReactNode }) { return <DashboardLayout>{children}</DashboardLayout>; }
 
@@ -42,7 +56,7 @@ function Router() {
 }
 
 function App() {
-  return <ErrorBoundary><ThemeProvider defaultTheme="light"><TooltipProvider><Toaster richColors position="top-right" /><Router /></TooltipProvider></ThemeProvider></ErrorBoundary>;
+  return <ErrorBoundary><ThemeProvider defaultTheme="light"><TooltipProvider><Toaster richColors position="top-right" /><Suspense fallback={<RouteLoader />}><Router /></Suspense></TooltipProvider></ThemeProvider></ErrorBoundary>;
 }
 
 export default App;
