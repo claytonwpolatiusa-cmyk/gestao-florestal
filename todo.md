@@ -121,3 +121,13 @@
 - [ ] Testar o formulário `/conteudos` pela interface pública, confirmar envio ao backend e desbloqueio da leitura.
 - [ ] Executar auditoria objetiva de acessibilidade com ferramenta dedicada, incluindo foco, contraste, nomes acessíveis e estados de erro.
 - [ ] Validar na UI o estado de erro do formulário em falha de rede ou validação.
+
+## Conversão comercial e arquitetura futura
+
+- [x] Atualizar a página de compra para ancoragem diária de R$ 9,90/dia e oferta promocional de R$ 597 por R$ 297/mês, com informação comercial clara.
+- [x] Reforçar a apresentação pública com proposta de pioneirismo regional em controle de fazenda e silvicultura, sem prometer exclusividade factual não verificável.
+- [x] Adicionar página pública de FAQ com respostas claras sobre plano, acesso, segurança, onboarding e suporte.
+- [x] Adicionar página pública de atendimento com canal de contato responsável e expectativa de resposta, sem alegar suporte indisponível ou inexistente.
+- [x] Informar na página `/atendimento` uma janela operacional de retorno realista e verificável, sem prometer disponibilidade não suportada.
+- [ ] Validar o formulário `/atendimento` ponta a ponta, incluindo envio pela interface e registro real em `supportRequests`.
+- [x] Preparar documento arquitetural independente para CapiLoop: split de pagamento, expiração automática, bloqueio de estoque e fluxo de disputa/reembolso.

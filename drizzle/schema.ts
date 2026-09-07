@@ -42,6 +42,17 @@ export const contentLeads = mysqlTable("contentLeads", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
+export const supportRequests = mysqlTable("supportRequests", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 180 }).notNull(),
+  email: varchar("email", { length: 320 }).notNull(),
+  phone: varchar("phone", { length: 32 }),
+  subject: varchar("subject", { length: 180 }).notNull(),
+  message: text("message").notNull(),
+  status: mysqlEnum("status", ["aberta", "em_andamento", "respondida", "encerrada"]).default("aberta").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
 export const properties = mysqlTable("properties", {
   id: int("id").autoincrement().primaryKey(),
   ownerId: int("ownerId").notNull(),

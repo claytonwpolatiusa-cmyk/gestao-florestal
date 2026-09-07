@@ -7,6 +7,7 @@ import { TicketsEnhancedPage } from "@/pages/TicketsEnhancedPage";
 import { StandsAuditedPage } from "@/pages/StandsAuditedPage";
 import NotFound from "@/pages/NotFound";
 import { LandingPage, PurchasePage, AccountPage, DelegatedLoginPage } from "@/pages/PublicPages";
+import { FaqPage, SupportPage } from "@/pages/PublicSupportPages";
 import TutorialPage from "@/pages/TutorialPage";
 import PublicContentPage from "@/pages/PublicContentPage";
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -23,6 +24,8 @@ function Router() {
     <Route path="/comprar" component={PurchasePage} />
     <Route path="/apresentacao" component={LandingPage} />
     <Route path="/conteudos" component={PublicContentPage} />
+    <Route path="/faq" component={FaqPage} />
+    <Route path="/atendimento" component={SupportPage} />
     <Route path="/acesso" component={DelegatedLoginPage} />
     <Route path="/perfil">{() => <Shell><AccountPage /></Shell>}</Route>
     <Route path="/tutorial">{() => <Shell><TutorialPage /></Shell>}</Route>

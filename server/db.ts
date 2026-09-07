@@ -14,6 +14,7 @@ import {
   users,
   delegatedAccessCodes,
   contentLeads,
+  supportRequests,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -79,6 +80,18 @@ export async function createContentLead(values: { name: string; email: string; w
     contentUpdatesConsent: values.contentUpdatesConsent ? 1 : 0,
     commercialContactConsent: values.commercialContactConsent ? 1 : 0,
     source: values.source?.trim() || "conteudos",
+  }).$returningId();
+  return { id: created.id };
+}
+
+export async function createSupportRequest(values: { name: string; email: string; phone?: string | null; subject: string; message: string }) {
+  const db = await requireDb();
+  const [created] = await db.insert(supportRequests).values({
+    name: values.name.trim(),
+    email: values.email.trim().toLowerCase(),
+    phone: values.phone?.trim() || null,
+    subject: values.subject.trim(),
+    message: values.message.trim(),
   }).$returningId();
   return { id: created.id };
 }
