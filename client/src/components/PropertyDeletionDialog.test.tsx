@@ -25,7 +25,7 @@ describe("PropertyDeletionDialog", () => {
     fireEvent.change(screen.getByLabelText("Nome exato da área"), { target: { value: " fazenda santa clara " } });
     expect(confirmButton.disabled).toBe(false);
     await user.click(confirmButton);
-    expect(onConfirm).toHaveBeenCalledTimes(1);
+    expect(onConfirm).toHaveBeenCalledWith(" fazenda santa clara ");
   });
 
   it("cancela sem confirmar a exclusão", async () => {
