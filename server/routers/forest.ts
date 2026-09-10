@@ -3,7 +3,6 @@ import { z } from "zod";
 import * as db from "../db";
 import { calculateOperationTotals, isTicketOverdue } from "../forestRules";
 import { buildTerritoryOverview } from "../territoryOverview";
-import { ringsFromStoredGeometry } from "../territoryGeometry";
 import { storagePut } from "../storage";
 import { protectedProcedure, router } from "../_core/trpc";
 
@@ -102,15 +101,7 @@ export const forestRouter = router({
       .filter(item => item.days <= 30)
       .sort((a, b) => a.days - b.days);
 
-    const territoryOverview = await Promise.all(buildTerritoryOverview(allStands, allLedger, allTickets).map(async item => {
-      const standRecord = allStands.find(record => record.stand.id === item.id)?.stand;
-      if (!standRecord) return { ...item, serverRings: [] };
-      try {
-        return { ...item, serverRings: await ringsFromStoredGeometry({ fileKey: standRecord.polygonFileKey, format: standRecord.polygonFormat, geoJson: standRecord.polygonGeoJson }) };
-      } catch {
-        return { ...item, serverRings: [] };
-      }
-    }));
+    const territoryOverview = buildTerritoryOverview(allStands, allLedger, allTickets);
 
     return {
       totals: {
