@@ -14,6 +14,7 @@ export type TerritoryOverviewItem = {
   polygonGeoJson: string | null;
   polygonFileUrl: string | null;
   polygonFormat: "kml" | "geojson" | "kmz" | "outro" | null;
+  serverRings?: TerritoryPoint[][];
   totalCosts: number;
   latestOperations: Array<{ id: string; kind: string; description: string; occurredAt: Date }>;
 };
@@ -37,7 +38,7 @@ export function OperationalTerritoryOverview({ items }: { items: TerritoryOvervi
   }, [fileRings, items]);
 
   const polygons = useMemo<SatellitePolygon[]>(() => items.flatMap(item => {
-    const rings = item.polygonGeoJson ? polygonRingsFromGeoJson(JSON.parse(item.polygonGeoJson)) : fileRings[item.id] || [];
+    const rings = item.serverRings?.length ? item.serverRings : item.polygonGeoJson ? polygonRingsFromGeoJson(JSON.parse(item.polygonGeoJson)) : fileRings[item.id] || [];
     return rings.length ? [{ id: item.id, label: item.code, species: item.species, rings }] : [];
   }), [fileRings, items]);
 

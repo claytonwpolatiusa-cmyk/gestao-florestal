@@ -1,6 +1,6 @@
 import JSZip from "jszip";
 import { describe, expect, it } from "vitest";
-import { polygonRingsFromGeoJson, polygonRingsFromKmz } from "./territoryGeometry";
+import { polygonRingsFromGeoJson, polygonRingsFromKmz, polygonRingsFromRemoteFile } from "./territoryGeometry";
 
 describe("geometria territorial", () => {
   it("interpreta um polígono GeoJSON", () => {
@@ -15,5 +15,15 @@ describe("geometria territorial", () => {
     expect(rings).toHaveLength(1);
     expect(rings[0]).toHaveLength(4);
     expect(rings[0][0]).toEqual({ lat: -26.1, lng: -51.1 });
+  });
+
+  it("reconhece KMZ remoto pela assinatura binária mesmo sem extensão no link", async () => {
+    const archive = new JSZip();
+    archive.file("limite.kml", "<kml><coordinates>-51.1,-26.1,0 -51.0,-26.1,0 -51.0,-26.0,0</coordinates></kml>");
+    const body = await archive.generateAsync({ type: "arraybuffer" });
+    const originalFetch = globalThis.fetch;
+    globalThis.fetch = async () => new Response(body, { status: 200, headers: { "content-type": "application/octet-stream" } });
+    await expect(polygonRingsFromRemoteFile("https://storage.example/opaque-key", null)).resolves.toHaveLength(1);
+    globalThis.fetch = originalFetch;
   });
 });

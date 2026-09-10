@@ -34,10 +34,13 @@ export async function polygonRingsFromKmz(buffer: ArrayBuffer): Promise<Territor
 export async function polygonRingsFromRemoteFile(url: string, format?: "kml" | "geojson" | "kmz" | null): Promise<TerritoryPoint[][]> {
   const response = await fetch(url);
   if (!response.ok) throw new Error("Não foi possível abrir o arquivo de mapa.");
-  const lowerUrl = url.toLowerCase();
-  const detected = lowerUrl.endsWith(".kmz") ? "kmz" : lowerUrl.includes("geojson") || lowerUrl.endsWith(".json") ? "geojson" : format || "kml";
-  if (detected === "kmz") return polygonRingsFromKmz(await response.arrayBuffer());
-  const text = await response.text();
-  if (detected === "geojson") return polygonRingsFromGeoJson(JSON.parse(text));
+  const buffer = await response.arrayBuffer();
+  const bytes = new Uint8Array(buffer);
+  const isZip = bytes.length >= 2 && bytes[0] === 0x50 && bytes[1] === 0x4b;
+  if (format === "kmz" || isZip) return polygonRingsFromKmz(buffer);
+  const text = new TextDecoder().decode(buffer).trim();
+  const contentType = response.headers.get("content-type")?.toLowerCase() || "";
+  const looksLikeGeoJson = format === "geojson" || contentType.includes("json") || text.startsWith("{") || text.startsWith("[");
+  if (looksLikeGeoJson) return polygonRingsFromGeoJson(JSON.parse(text));
   return polygonRingsFromKml(text);
 }
