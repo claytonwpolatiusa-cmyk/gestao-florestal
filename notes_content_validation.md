@@ -9,3 +9,5 @@ A checagem visual não substitui uma auditoria automatizada completa de acessibi
 ## Limitação da auditoria automatizada
 
 Foi tentada uma auditoria dedicada com axe CLI. O processo instalou dependências temporárias, mas falhou ao iniciar o chromedriver por erro `ENOENT`; uma tentativa separada com Playwright também não encontrou o módulo no caminho do script. A auditoria automatizada, portanto, permanece pendente e não foi declarada como concluída.
+
+Em 07/09/2026, uma nova tentativa com `@axe-core/cli` também alcançou a inicialização do axe-core, mas falhou antes da análise pelo mesmo motivo: o executável temporário do chromedriver não estava disponível no ambiente (`ENOENT`). Nenhum dado de formulário foi enviado nessa tentativa.

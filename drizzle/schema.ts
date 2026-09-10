@@ -111,6 +111,17 @@ export const propertyAuditLogs = mysqlTable("propertyAuditLogs", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
+export const propertyDeletionLogs = mysqlTable("propertyDeletionLogs", {
+  id: int("id").autoincrement().primaryKey(),
+  deletedPropertyId: int("deletedPropertyId").notNull(),
+  propertyName: varchar("propertyName", { length: 180 }).notNull(),
+  ownerUserId: int("ownerUserId").notNull(),
+  actorUserId: int("actorUserId").notNull(),
+  actorName: varchar("actorName", { length: 180 }),
+  deletedStandsCount: int("deletedStandsCount").notNull().default(0),
+  deletedAt: timestamp("deletedAt").defaultNow().notNull(),
+});
+
 export const contracts = mysqlTable("contracts", {
   id: int("id").autoincrement().primaryKey(),
   propertyId: int("propertyId").notNull(),
@@ -226,6 +237,7 @@ export type InsertUser = typeof users.$inferInsert;
 export type ContentLead = typeof contentLeads.$inferSelect;
 export type Property = typeof properties.$inferSelect;
 export type PropertyAuditLog = typeof propertyAuditLogs.$inferSelect;
+export type PropertyDeletionLog = typeof propertyDeletionLogs.$inferSelect;
 export type Stand = typeof stands.$inferSelect;
 export type Contract = typeof contracts.$inferSelect;
 export type Ticket = typeof tickets.$inferSelect;

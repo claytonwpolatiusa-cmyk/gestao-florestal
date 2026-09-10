@@ -3,6 +3,8 @@ import type { TrpcContext } from "./_core/context";
 
 const dbMocks = vi.hoisted(() => ({
   createProperty: vi.fn(),
+  deletePropertyPermanently: vi.fn(),
+  getOwnedProperty: vi.fn(),
   updateProperty: vi.fn(),
 }));
 
@@ -71,5 +73,22 @@ describe("forest.property audit trail", () => {
       { id: 27, name: "Operador de Campo" },
       { ...propertyValues, state: "SC" },
     );
+  });
+
+  it("exige o nome exato da área antes de executar exclusão permanente", async () => {
+    dbMocks.getOwnedProperty.mockResolvedValue({ id: 41, ownerId: 27, name: "Fazenda Santa Clara" });
+    const caller = appRouter.createCaller(createAuthenticatedContext());
+
+    await expect(caller.forest.property.delete({ id: 41, confirmationName: "nome incorreto" })).rejects.toThrow("Digite o nome exato da área");
+    expect(dbMocks.deletePropertyPermanently).not.toHaveBeenCalled();
+  });
+
+  it("encaminha exclusão confirmada com o usuário autenticado como responsável", async () => {
+    dbMocks.getOwnedProperty.mockResolvedValue({ id: 41, ownerId: 27, name: "Fazenda Santa Clara" });
+    dbMocks.deletePropertyPermanently.mockResolvedValue({ deletedStandsCount: 2 });
+    const caller = appRouter.createCaller(createAuthenticatedContext());
+
+    await expect(caller.forest.property.delete({ id: 41, confirmationName: "fazenda santa clara" })).resolves.toEqual({ deletedStandsCount: 2 });
+    expect(dbMocks.deletePropertyPermanently).toHaveBeenCalledWith(41, 27, { id: 27, name: "Operador de Campo" });
   });
 });

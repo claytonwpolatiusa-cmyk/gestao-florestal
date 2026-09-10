@@ -127,6 +127,17 @@ export const forestRouter = router({
       await db.updateProperty(id, ctx.user.id, { id: ctx.user.id, name: ctx.user.name }, values);
       return { success: true };
     }),
+    delete: protectedProcedure.input(z.object({
+      id: z.number().int().positive(),
+      confirmationName: z.string().trim().min(2).max(180),
+    })).mutation(async ({ ctx, input }) => {
+      const property = await db.getOwnedProperty(input.id, ctx.user.id);
+      if (!property) throw new Error("Área não encontrada ou sem autorização.");
+      if (property.name.trim().toLocaleLowerCase("pt-BR") !== input.confirmationName.trim().toLocaleLowerCase("pt-BR")) {
+        throw new Error("Digite o nome exato da área para confirmar a exclusão.");
+      }
+      return db.deletePropertyPermanently(input.id, ctx.user.id, { id: ctx.user.id, name: ctx.user.name });
+    }),
   }),
 
   stand: router({

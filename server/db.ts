@@ -1,4 +1,4 @@
-import { and, desc, eq, gt, isNull } from "drizzle-orm";
+import { and, desc, eq, gt, inArray, isNull } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
   contracts,
@@ -7,6 +7,7 @@ import {
   inspections,
   ledgerEntries,
   propertyAuditLogs,
+  propertyDeletionLogs,
   properties,
   stands,
   tickets,
@@ -183,6 +184,36 @@ export async function listPropertyAuditLogs(propertyId: number, ownerId: number)
   if (!property) throw new Error("Propriedade não encontrada ou sem autorização.");
   const db = await requireDb();
   return db.select().from(propertyAuditLogs).where(eq(propertyAuditLogs.propertyId, propertyId)).orderBy(desc(propertyAuditLogs.createdAt));
+}
+
+export async function deletePropertyPermanently(id: number, ownerId: number, actor: AuditActor) {
+  const property = await getOwnedProperty(id, ownerId);
+  if (!property) throw new Error("Área não encontrada ou sem autorização.");
+  const db = await requireDb();
+
+  return db.transaction(async (tx) => {
+    const ownedStands = await tx.select({ id: stands.id }).from(stands).where(eq(stands.propertyId, id));
+    const standIds = ownedStands.map(item => item.id);
+
+    if (standIds.length) await tx.delete(tickets).where(inArray(tickets.standId, standIds));
+    await tx.delete(documents).where(eq(documents.propertyId, id));
+    await tx.delete(inspections).where(eq(inspections.propertyId, id));
+    await tx.delete(incidents).where(eq(incidents.propertyId, id));
+    await tx.delete(ledgerEntries).where(eq(ledgerEntries.propertyId, id));
+    await tx.delete(contracts).where(eq(contracts.propertyId, id));
+    await tx.delete(propertyAuditLogs).where(eq(propertyAuditLogs.propertyId, id));
+    await tx.delete(stands).where(eq(stands.propertyId, id));
+    await tx.delete(properties).where(and(eq(properties.id, id), eq(properties.ownerId, ownerId)));
+    await tx.insert(propertyDeletionLogs).values({
+      deletedPropertyId: id,
+      propertyName: property.name,
+      ownerUserId: ownerId,
+      actorUserId: actor.id,
+      actorName: actor.name,
+      deletedStandsCount: standIds.length,
+    });
+    return { deletedStandsCount: standIds.length };
+  });
 }
 
 export async function listStands(ownerId: number) {

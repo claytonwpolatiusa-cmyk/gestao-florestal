@@ -133,3 +133,15 @@
 - [x] Preparar documento arquitetural independente para CapiLoop: split de pagamento, expiração automática, bloqueio de estoque e fluxo de disputa/reembolso.
 - [x] Persistir interesses de assinatura do plano promocional, com consentimento explícito de contato para ativação.
 - [x] Separar rotas pesadas por carregamento sob demanda para reduzir o bundle inicial apontado pela build; o bundle principal caiu de cerca de 2,3 MB para cerca de 744 kB, com páginas em chunks próprios.
+
+## Experiência territorial, mapa e segurança
+
+- [x] Renderizar em mapa interativo os polígonos KML ou GeoJSON associados às áreas e aos talhões cadastrados, com suporte adicional a KMZ.
+- [x] Criar visão territorial consolidada com todos os polígonos disponíveis, ajuste automático de enquadramento e destaque por área.
+- [x] Simplificar o fluxo de cadastro de propriedade/área e talhão, com linguagem objetiva e interface minimalista.
+- [x] Implementar exclusão permanente de propriedade com dupla confirmação explícita, exclusão transacional dos dados vinculados e registro administrativo de auditoria.
+- [ ] Cobrir em testes as regras de exclusão de propriedade e validar mapa, cadastro e proteção contra exclusão acidental.
+- [x] Testar a lógica de interface da dupla confirmação: avanço para Danger Zone, bloqueio sem nome exato, cancelamento e confirmação final, em teste de componente.
+- [x] Validar o destaque territorial e a visão consolidada em teste de componente; o polígono KMZ existente também foi renderizado visualmente em desktop e celular.
+- [x] Adicionar teste automatizado da extração de KML interno de um arquivo KMZ e da geração de recorte territorial.
+- [ ] Validar na UI os formulários simplificados de Nova área e Novo talhão, incluindo estado de sucesso/erro e envio de arquivo de mapa.
