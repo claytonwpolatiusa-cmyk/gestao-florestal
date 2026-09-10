@@ -55,6 +55,12 @@ export function StandsAuditedPage() {
   const deleteProperty = trpc.forest.property.delete.useMutation({ onSuccess: async data => { toast.success(`Área excluída permanentemente. ${data.deletedStandsCount} talhão(ões) removido(s).`); await refreshTerritory(); setDeleteTarget(null); }, onError: error => toast.error(error.message) });
 
   useEffect(() => {
+    const modal = new URLSearchParams(window.location.search).get("novo");
+    if (modal === "area") setPropertyOpen(true);
+    if (modal === "talhao" && properties.data?.length) openStand();
+  }, [properties.data]);
+
+  useEffect(() => {
     let active = true;
     setBoundaryRings([]);
     if (!selectedProperty?.boundaryFileUrl) return;

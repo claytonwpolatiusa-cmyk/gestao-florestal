@@ -59,7 +59,7 @@ export function SatelliteTerritoryMap({ polygons, selectedId, onSelect, drawingE
   const overlaysRef = useRef<google.maps.Polygon[]>([]);
   const drawingRef = useRef<google.maps.drawing.DrawingManager | null>(null);
   const [ready, setReady] = useState(false);
-  const [mapError, setMapError] = useState(false);
+  const [mapError, setMapError] = useState(true);
 
   const clearOverlays = useCallback(() => { overlaysRef.current.forEach(item => item.setMap(null)); overlaysRef.current = []; }, []);
   const centerAll = useCallback(() => {
