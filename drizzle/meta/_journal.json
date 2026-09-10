@@ -71,6 +71,13 @@
       "when": 1789042770918,
       "tag": "0009_skinny_yellow_claw",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1789078924027,
+      "tag": "0010_lethal_raider",
+      "breakpoints": true
     }
   ]
 }

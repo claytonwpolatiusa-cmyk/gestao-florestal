@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import * as db from "../db";
 import { calculateOperationTotals, isTicketOverdue } from "../forestRules";
+import { buildTerritoryOverview } from "../territoryOverview";
 import { storagePut } from "../storage";
 import { protectedProcedure, router } from "../_core/trpc";
 
@@ -23,6 +24,11 @@ const uploadSchema = z.object({
   fileName: z.string().trim().max(180).optional(),
   mimeType: z.string().trim().max(100).optional(),
 }).optional();
+
+const propertyBoundarySchema = uploadSchema.refine(file => {
+  if (!file?.dataBase64) return true;
+  return Boolean(file.fileName?.trim().toLowerCase().endsWith(".kml"));
+}, "Envie o limite da Área em arquivo KML.");
 
 function safeFileName(name: string) {
   return name.replace(/[^a-zA-Z0-9._-]/g, "_").replace(/_+/g, "_");
@@ -95,6 +101,8 @@ export const forestRouter = router({
       .filter(item => item.days <= 30)
       .sort((a, b) => a.days - b.days);
 
+    const territoryOverview = buildTerritoryOverview(allStands, allLedger, allTickets);
+
     return {
       totals: {
         properties: allProperties.length,
@@ -115,13 +123,18 @@ export const forestRouter = router({
       overdueTickets: overdueTickets.slice(0, 5),
       openIncidents: filteredIncidents.filter(item => item.incident.status !== "resolvida").slice(0, 5),
       filterOptions: allStands.map(item => ({ id: item.stand.id, code: item.stand.code, propertyName: item.propertyName })),
+      territoryOverview,
     };
   }),
 
   property: router({
     list: protectedProcedure.query(({ ctx }) => db.listProperties(ctx.user.id)),
     history: protectedProcedure.input(z.object({ id: z.number().int().positive() })).query(({ ctx, input }) => db.listPropertyAuditLogs(input.id, ctx.user.id)),
-    create: protectedProcedure.input(propertySchema).mutation(async ({ ctx, input }) => ({ id: await db.createProperty(ctx.user.id, { id: ctx.user.id, name: ctx.user.name }, input) })),
+    create: protectedProcedure.input(propertySchema.extend({ boundaryFile: propertyBoundarySchema })).mutation(async ({ ctx, input }) => {
+      const { boundaryFile, ...values } = input;
+      const uploaded = await uploadFile(ctx.user.id, "limites-area", boundaryFile);
+      return { id: await db.createProperty(ctx.user.id, { id: ctx.user.id, name: ctx.user.name }, { ...values, boundaryFileUrl: uploaded.fileUrl || null, boundaryFileKey: uploaded.fileKey || null, boundaryFormat: uploaded.fileUrl ? "kml" : null }) };
+    }),
     update: protectedProcedure.input(propertySchema.extend({ id: z.number().int().positive() })).mutation(async ({ ctx, input }) => {
       const { id, ...values } = input;
       await db.updateProperty(id, ctx.user.id, { id: ctx.user.id, name: ctx.user.name }, values);
@@ -157,9 +170,20 @@ export const forestRouter = router({
       polygonFile: uploadSchema,
       notes: optionalText(5_000),
     })).mutation(async ({ ctx, input }) => {
-      const { polygonFile, ...values } = input;
+      const { polygonFile, name, polygonUrl, polygonGeoJson, polygonFormat, polygonVersion, notes, ...requiredValues } = input;
       const uploaded = await uploadFile(ctx.user.id, "poligonos", polygonFile);
-      return { id: await db.createStand(ctx.user.id, { ...values, areaHa: input.areaHa.toFixed(2), polygonFileUrl: uploaded.fileUrl || null, polygonFileKey: uploaded.fileKey || null }) };
+      return { id: await db.createStand(ctx.user.id, {
+        ...requiredValues,
+        areaHa: input.areaHa.toFixed(2),
+        name: name ?? null,
+        polygonUrl: polygonUrl ?? null,
+        polygonGeoJson: polygonGeoJson ?? null,
+        polygonFileUrl: uploaded.fileUrl || null,
+        polygonFileKey: uploaded.fileKey || null,
+        polygonFormat: polygonFormat ?? null,
+        polygonVersion: polygonVersion ?? null,
+        notes: notes ?? null,
+      }) };
     }),
   }),
 

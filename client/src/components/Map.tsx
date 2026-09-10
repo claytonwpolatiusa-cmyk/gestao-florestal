@@ -93,17 +93,29 @@ const FORGE_BASE_URL =
 const MAPS_PROXY_URL = `${FORGE_BASE_URL}/v1/maps/proxy`;
 
 function loadMapScript() {
-  return new Promise(resolve => {
+  return new Promise<void>((resolve, reject) => {
+    const timeout = window.setTimeout(() => reject(new Error("Tempo esgotado ao carregar o mapa.")), 10_000);
+    const succeed = () => { window.clearTimeout(timeout); resolve(); };
+    const fail = (error: Error) => { window.clearTimeout(timeout); reject(error); };
+    if (window.google?.maps) { succeed(); return; }
+    const existing = document.querySelector<HTMLScriptElement>('script[data-treeway-maps="true"]');
+    if (existing) {
+      existing.addEventListener("load", succeed, { once: true });
+      existing.addEventListener("error", () => fail(new Error("Não foi possível carregar o mapa.")), { once: true });
+      return;
+    }
     const script = document.createElement("script");
-    script.src = `${MAPS_PROXY_URL}/maps/api/js?key=${API_KEY}&v=weekly&libraries=marker,places,geocoding,geometry`;
+    script.dataset.treewayMaps = "true";
+    script.src = `${MAPS_PROXY_URL}/maps/api/js?key=${API_KEY}&v=weekly&libraries=marker,places,geocoding,geometry,drawing`;
     script.async = true;
-    script.crossOrigin = "anonymous";
     script.onload = () => {
-      resolve(null);
+      succeed();
       script.remove(); // Clean up immediately
     };
     script.onerror = () => {
       console.error("Failed to load Google Maps script");
+      script.remove();
+      fail(new Error("Não foi possível carregar o mapa."));
     };
     document.head.appendChild(script);
   });
@@ -114,6 +126,7 @@ interface MapViewProps {
   initialCenter?: google.maps.LatLngLiteral;
   initialZoom?: number;
   onMapReady?: (map: google.maps.Map) => void;
+  onMapError?: (error: Error) => void;
 }
 
 export function MapView({
@@ -121,12 +134,18 @@ export function MapView({
   initialCenter = { lat: 37.7749, lng: -122.4194 },
   initialZoom = 12,
   onMapReady,
+  onMapError,
 }: MapViewProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<google.maps.Map | null>(null);
 
   const init = usePersistFn(async () => {
-    await loadMapScript();
+    try {
+      await loadMapScript();
+    } catch (error) {
+      onMapError?.(error instanceof Error ? error : new Error("Não foi possível carregar o mapa."));
+      return;
+    }
     if (!mapContainer.current) {
       console.error("Map container not found");
       return;

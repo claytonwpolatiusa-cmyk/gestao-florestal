@@ -30,3 +30,14 @@ export async function polygonRingsFromKmz(buffer: ArrayBuffer): Promise<Territor
   if (!kmlPath) return [];
   return polygonRingsFromKml(await archive.files[kmlPath].async("text"));
 }
+
+export async function polygonRingsFromRemoteFile(url: string, format?: "kml" | "geojson" | "kmz" | null): Promise<TerritoryPoint[][]> {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error("Não foi possível abrir o arquivo de mapa.");
+  const lowerUrl = url.toLowerCase();
+  const detected = lowerUrl.endsWith(".kmz") ? "kmz" : lowerUrl.includes("geojson") || lowerUrl.endsWith(".json") ? "geojson" : format || "kml";
+  if (detected === "kmz") return polygonRingsFromKmz(await response.arrayBuffer());
+  const text = await response.text();
+  if (detected === "geojson") return polygonRingsFromGeoJson(JSON.parse(text));
+  return polygonRingsFromKml(text);
+}

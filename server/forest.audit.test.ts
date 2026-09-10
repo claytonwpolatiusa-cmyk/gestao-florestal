@@ -3,6 +3,7 @@ import type { TrpcContext } from "./_core/context";
 
 const dbMocks = vi.hoisted(() => ({
   createProperty: vi.fn(),
+  createStand: vi.fn(),
   deletePropertyPermanently: vi.fn(),
   getOwnedProperty: vi.fn(),
   updateProperty: vi.fn(),
@@ -58,7 +59,7 @@ describe("forest.property audit trail", () => {
     expect(dbMocks.createProperty).toHaveBeenCalledWith(
       27,
       { id: 27, name: "Operador de Campo" },
-      { ...propertyValues, state: "SC" },
+      { ...propertyValues, state: "SC", boundaryFileUrl: null, boundaryFileKey: null, boundaryFormat: null },
     );
   });
 
@@ -73,6 +74,28 @@ describe("forest.property audit trail", () => {
       { id: 27, name: "Operador de Campo" },
       { ...propertyValues, state: "SC" },
     );
+  });
+
+  it("aceita um talhão com somente campos essenciais e normaliza os geográficos vazios", async () => {
+    dbMocks.createStand.mockResolvedValue(88);
+    const caller = appRouter.createCaller(createAuthenticatedContext());
+
+    await expect(caller.forest.stand.create({ propertyId: 41, code: "t-88", species: "pinus", areaHa: 12.5, operationalStatus: "ativo" })).resolves.toEqual({ id: 88 });
+    expect(dbMocks.createStand).toHaveBeenCalledWith(27, expect.objectContaining({
+      propertyId: 41,
+      code: "T-88",
+      species: "pinus",
+      areaHa: "12.50",
+      operationalStatus: "ativo",
+      name: null,
+      polygonUrl: null,
+      polygonGeoJson: null,
+      polygonFileUrl: null,
+      polygonFileKey: null,
+      polygonFormat: null,
+      polygonVersion: null,
+      notes: null,
+    }));
   });
 
   it("exige o nome exato da área antes de executar exclusão permanente", async () => {

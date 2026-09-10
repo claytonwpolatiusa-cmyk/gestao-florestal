@@ -89,6 +89,19 @@ export async function makeRequest<T = unknown>(
   return (await response.json()) as T;
 }
 
+/** Faz uma chamada autenticada ao proxy de mapas que retorna conteúdo binário, como Static Maps. */
+export async function makeBinaryRequest(endpoint: string, params: Record<string, unknown> = {}): Promise<{ data: Buffer; contentType: string }> {
+  const { baseUrl, apiKey } = getMapsConfig();
+  const url = new URL(`${baseUrl}/v1/maps/proxy${endpoint}`);
+  url.searchParams.append("key", apiKey);
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) url.searchParams.append(key, String(value));
+  });
+  const response = await fetch(url.toString());
+  if (!response.ok) throw new Error(`Google Maps binary request failed (${response.status} ${response.statusText})`);
+  return { data: Buffer.from(await response.arrayBuffer()), contentType: response.headers.get("content-type") || "image/png" };
+}
+
 // ============================================================================
 // Type Definitions
 // ============================================================================
@@ -313,7 +326,6 @@ export type RoadsResult = {
  * Output: Image URL (not JSON) - use directly in <img src={url} />
  * Note: Construct URL manually with getMapsConfig() for auth
  */
-
 
 
 

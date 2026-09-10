@@ -1,5 +1,7 @@
 # Project TODO
 
+> **Checklist anterior pausado temporariamente.** A prioridade atual é exclusivamente a refatoração espacial, de interface e de correção de persistência territorial abaixo.
+
 - [x] Estruturar a arquitetura da plataforma e a navegação principal orientada a operações florestais.
 - [x] Criar modelo de dados para propriedades, talhões, operações, tickets, documentos, contratos, garantias, vistorias e ocorrências.
 - [x] Implementar cadastro e visualização de talhões com espécie, área, ciclo e vínculo para polígono geográfico.
@@ -140,9 +142,19 @@
 - [x] Criar visão territorial consolidada com todos os polígonos disponíveis, ajuste automático de enquadramento e destaque por área.
 - [x] Simplificar o fluxo de cadastro de propriedade/área e talhão, com linguagem objetiva e interface minimalista.
 - [x] Implementar exclusão permanente de propriedade com dupla confirmação explícita, exclusão transacional dos dados vinculados e registro administrativo de auditoria.
-- [ ] Cobrir em testes as regras de exclusão de propriedade e validar mapa, cadastro e proteção contra exclusão acidental.
+- [x] Cobrir em testes as regras de exclusão de propriedade e validar mapa e proteção contra exclusão acidental.
 - [x] Testar a lógica de interface da dupla confirmação: avanço para Danger Zone, bloqueio sem nome exato, cancelamento e confirmação final, em teste de componente.
 - [x] Validar o destaque territorial e a visão consolidada em teste de componente; o polígono KMZ existente também foi renderizado visualmente em desktop e celular.
 - [x] Adicionar teste automatizado da extração de KML interno de um arquivo KMZ e da geração de recorte territorial.
 - [ ] Validar na UI os formulários simplificados de Nova área e Novo talhão, incluindo estado de sucesso/erro e envio de arquivo de mapa.
 - [x] Validar no código o tipo e o tamanho de arquivos de mapa antes do envio, com mensagens claras para KML, GeoJSON e KMZ.
+
+## Refatoração espacial integrada — prioridade atual
+
+- [x] Corrigir a tabela `stands` para aceitar nulos em todos os campos de arquivos, links, geometrias textuais e anotações avançadas.
+- [x] Simplificar o cadastro de Área para upload direto de KML, ocultando campos técnicos de geografia.
+- [x] Substituir o cadastro técnico de Talhão por desenho de polígono em mapa satélite e cálculo automático de hectares, com desenho por pontos de contingência.
+- [x] Salvar em segundo plano a geometria criada no mapa e seus metadados essenciais, mantendo obrigatórios apenas propriedade, código, espécie, área e status.
+- [x] Exibir na Visão Geral um mapa satélite consolidado, com polígonos coloridos por cultura; quando o editor interativo oficial falha, a imagem satélite autenticada mantém os limites clicáveis em contingência.
+- [x] Abrir painel de resumo por talhão ao clicar no polígono, exibindo nome, cultura, status, custos, últimas operações e acesso aos detalhes.
+- [x] Cobrir regras espaciais, persistência opcional e cálculo de área com testes automatizados e validar a experiência em desktop e celular.
