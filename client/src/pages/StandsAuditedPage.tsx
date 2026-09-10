@@ -4,6 +4,7 @@ import TerritoryMap from "@/components/TerritoryMap";
 import { Button } from "@/components/ui/button";
 import { dateTime, number, readUpload, statusTone } from "@/lib/forest";
 import { polygonRingsFromGeoJson, polygonRingsFromRemoteFile, type TerritoryPoint } from "@/lib/territoryGeometry";
+import { validateAreaDraft, validateStandDraft } from "@/lib/territoryFormRules";
 import { trpc } from "@/lib/trpc";
 import { Clock3, Edit3, Landmark, Loader2, MapPinned, MapPin, Plus, ShieldCheck, Trees, Trash2, Upload, X } from "lucide-react";
 import { FormEvent, useEffect, useMemo, useState } from "react";
@@ -78,16 +79,21 @@ export function StandsAuditedPage() {
   const submitProperty = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
-    if (boundaryFile && !boundaryFile.name.toLowerCase().endsWith(".kml")) { toast.error("Envie o limite da Área em arquivo KML."); return; }
     const values = { name: String(form.get("name")), registry: String(form.get("registry")) || null, carNumber: String(form.get("carNumber")) || null, municipality: String(form.get("municipality")), state: String(form.get("state")), address: String(form.get("address")) || null, notes: String(form.get("notes")) || null };
+    const validationError = validateAreaDraft({ name: values.name, municipality: values.municipality, state: values.state, boundaryFileName: boundaryFile?.name });
+    if (validationError) { toast.error(validationError); return; }
     if (editing) updateProperty.mutate({ id: editing.id, ...values }); else createProperty.mutate({ ...values, boundaryFile: await readUpload(boundaryFile) });
   };
 
   const submitStand = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!drawnArea) { toast.error("Desenhe o limite do talhão no mapa para calcular os hectares."); return; }
     const form = new FormData(event.currentTarget);
-    createStand.mutate({ propertyId: Number(selectedPropertyId), code: String(form.get("code")), name: String(form.get("name")) || null, species: String(form.get("species")) as "pinus" | "eucalipto", areaHa: drawnArea.areaHa, cycleStatus: String(form.get("cycleStatus")) as "aguardando" | "primeiro_desbaste" | "segundo_desbaste" | "corte_raso", operationalStatus: String(form.get("operationalStatus")) as "ativo" | "em_colheita" | "bloqueado" | "concluido", polygonGeoJson: drawnArea.geoJson, polygonFormat: "geojson", notes: String(form.get("notes")) || null });
+    const propertyId = Number(selectedPropertyId);
+    const code = String(form.get("code"));
+    const species = String(form.get("species"));
+    const validationError = validateStandDraft({ propertyId, code, species, areaHa: drawnArea?.areaHa ?? null });
+    if (validationError || !drawnArea) { toast.error(validationError || "Desenhe o limite do talhão no mapa para calcular os hectares."); return; }
+    createStand.mutate({ propertyId, code, name: String(form.get("name")) || null, species: species as "pinus" | "eucalipto", areaHa: drawnArea.areaHa, cycleStatus: String(form.get("cycleStatus")) as "aguardando" | "primeiro_desbaste" | "segundo_desbaste" | "corte_raso", operationalStatus: String(form.get("operationalStatus")) as "ativo" | "em_colheita" | "bloqueado" | "concluido", polygonGeoJson: drawnArea.geoJson, polygonFormat: "geojson", notes: String(form.get("notes")) || null });
   };
 
   const totalArea = stands.data?.reduce((sum, item) => sum + Number(item.stand.areaHa), 0) || 0;
