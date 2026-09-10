@@ -145,3 +145,4 @@
 - [x] Validar o destaque territorial e a visão consolidada em teste de componente; o polígono KMZ existente também foi renderizado visualmente em desktop e celular.
 - [x] Adicionar teste automatizado da extração de KML interno de um arquivo KMZ e da geração de recorte territorial.
 - [ ] Validar na UI os formulários simplificados de Nova área e Novo talhão, incluindo estado de sucesso/erro e envio de arquivo de mapa.
+- [x] Validar no código o tipo e o tamanho de arquivos de mapa antes do envio, com mensagens claras para KML, GeoJSON e KMZ.

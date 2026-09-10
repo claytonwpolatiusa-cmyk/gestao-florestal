@@ -2,6 +2,7 @@ import { PropertyDeletionDialog } from "@/components/PropertyDeletionDialog";
 import TerritoryMap from "@/components/TerritoryMap";
 import { Button } from "@/components/ui/button";
 import { dateTime, number, readUpload, statusTone } from "@/lib/forest";
+import { mapFileValidationError } from "@/lib/territoryUpload";
 import { trpc } from "@/lib/trpc";
 import { Clock3, Edit3, FileCode2, FileText, Landmark, Loader2, MapPin, Plus, ShieldCheck, Trees, Trash2, Upload, X } from "lucide-react";
 import { FormEvent, useState } from "react";
@@ -61,7 +62,8 @@ export function StandsAuditedPage() {
   const submitStand = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      if (polygonFile && polygonFile.size > 3_000_000) { toast.error("O arquivo de mapa deve ter até 3 MB."); return; }
+      const fileError = mapFileValidationError(polygonFile);
+      if (fileError) { toast.error(fileError); return; }
       const form = new FormData(event.currentTarget);
       createStand.mutate({ propertyId: Number(form.get("propertyId")), code: String(form.get("code")), name: String(form.get("name")) || null, species: String(form.get("species")) as "pinus" | "eucalipto", areaHa: Number(form.get("areaHa")), cycleStatus: String(form.get("cycleStatus")) as "aguardando" | "primeiro_desbaste" | "segundo_desbaste" | "corte_raso", operationalStatus: String(form.get("operationalStatus")) as "ativo" | "em_colheita" | "bloqueado" | "concluido", polygonUrl: String(form.get("polygonUrl")) || null, polygonGeoJson: String(form.get("polygonGeoJson")) || null, polygonFormat: form.get("polygonFormat") ? String(form.get("polygonFormat")) as "kml" | "geojson" | "kmz" | "outro" : null, polygonVersion: String(form.get("polygonVersion")) || null, polygonFile: await readUpload(polygonFile), notes: String(form.get("notes")) || null });
     } catch (error) { toast.error(error instanceof Error ? error.message : "Não foi possível preparar o arquivo de mapa."); }
